@@ -1,0 +1,2490 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Guia prático de Aprendizagem por Reforço utilizando o AWS DeepRacer.">
+      
+      
+        <meta name="author" content="Ruan Andrew">
+      
+      
+        <link rel="canonical" href="https://labpei-ifpe-paulista.github.io/bia-deepracer/otimizacao-e-estrategia/">
+      
+      
+        <link rel="prev" href="../fundamentos-rl/">
+      
+      
+        <link rel="next" href="../analise-de-logs/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>3. Otimização e Estratégia - Da Teoria à Pista</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#funcao-de-recompensa-hiperparametros-e-algoritmos-de-aprendizado" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="Da Teoria à Pista" class="md-header__button md-logo" aria-label="Da Teoria à Pista" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Da Teoria à Pista
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3. Otimização e Estratégia
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Mudar para modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Mudar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/labpei-ifpe-paulista/bia-deepracer" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    labpei-ifpe-paulista/bia-deepracer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../introducao/" class="md-tabs__link">
+          
+  
+  
+  O Guia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Da Teoria à Pista" class="md-nav__button md-logo" aria-label="Da Teoria à Pista" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Da Teoria à Pista
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/labpei-ifpe-paulista/bia-deepracer" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    labpei-ifpe-paulista/bia-deepracer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    O Guia
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    O Guia
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../introducao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introdução
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos-rl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Fundamentos de RL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Otimização e Estratégia
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Otimização e Estratégia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requisito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-requisito
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otimizando-a-funcao-de-recompensa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Otimizando a Função de Recompensa
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Otimizando a Função de Recompensa">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dica-1-nao-programe-explicitamente-as-acoes-do-carro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 1: Não programe explicitamente as ações do carro
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 1: Não programe explicitamente as ações do carro">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nota-sobre-generalizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nota sobre generalização
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-2-comece-simples-e-priorize-a-conclusao-da-pista" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 2: Comece simples e priorize a conclusão da pista
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 2: Comece simples e priorize a conclusão da pista">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-recomendada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia recomendada
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-3-combine-as-recompensas-com-cuidado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 3: Combine as recompensas com cuidado
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 3: Combine as recompensas com cuidado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-soma-simples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Soma simples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-multiplicacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Multiplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-potenciacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Potenciação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-4-utilize-pesos-para-expressar-prioridades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 4: Utilize pesos para expressar prioridades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-5-evite-recompensar-a-velocidade-sem-considerar-o-contexto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 5: Evite recompensar a velocidade sem considerar o contexto
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 5: Evite recompensar a velocidade sem considerar o contexto">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#abordagem-condicional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abordagem condicional
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#abordagem-indireta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abordagem indireta
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-6-considere-recompensar-a-conclusao-da-pista" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 6: Considere recompensar a conclusão da pista
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 6: Considere recompensar a conclusão da pista">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bonus-por-conclusao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bônus por conclusão
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bonus-dinamico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bônus dinâmico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aviso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aviso
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-7-penalize-comportamentos-que-comprometem-o-objetivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 7: Penalize comportamentos que comprometem o objetivo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 7: Penalize comportamentos que comprometem o objetivo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#como-penalizar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como penalizar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#por-que-nao-tratar-zero-ou-valores-negativos-como-universalmente-proibidos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que não tratar zero ou valores negativos como universalmente proibidos?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-8-mantenha-uma-escala-de-recompensas-coerente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 8: Mantenha uma escala de recompensas coerente
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 8: Mantenha uma escala de recompensas coerente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recompensas-desproporcionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recompensas desproporcionais
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#penalizacoes-desproporcionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Penalizações desproporcionais
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#como-avaliar-a-escala" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como avaliar a escala
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otimizando-hiperparametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Otimizando Hiperparâmetros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Otimizando Hiperparâmetros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dica-9-hiperparametros-nao-fazem-milagres" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 9: Hiperparâmetros não fazem milagres
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-10-o-modelo-piorou-investigue-antes-de-modificar-os-parametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 10: O modelo piorou? Investigue antes de modificar os parâmetros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 10: O modelo piorou? Investigue antes de modificar os parâmetros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-diagnostico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia de diagnóstico
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-11-conheca-os-principais-hiperparametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 11: Conheça os principais hiperparâmetros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 11: Conheça os principais hiperparâmetros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taxa-de-aprendizado-learning-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Taxa de aprendizado (Learning Rate)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tamanho-do-lote-batch-size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tamanho do lote (Batch Size)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#numero-de-epocas-number-of-epochs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Número de épocas (Number of Epochs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#numero-de-episodios-entre-atualizacoes-da-politica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Número de episódios entre atualizações da política
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#entropia-e-exploracao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entropia e exploração
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fator-de-desconto-discount-factor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fator de desconto (Discount Factor)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#funcao-de-perda-loss-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Função de perda (Loss Type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clonagem-de-modelos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clonagem de modelos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#algoritmos-de-aprendizado-ppo-vs-sac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Algoritmos de Aprendizado: PPO vs. SAC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Algoritmos de Aprendizado: PPO vs. SAC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-diferenca-central-on-policy-vs-off-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A diferença central: On-Policy vs. Off-Policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quando-usar-ppo-proximal-policy-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quando usar PPO (Proximal Policy Optimization)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quando usar PPO (Proximal Policy Optimization)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#para-iniciantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Para iniciantes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#espaco-de-acao-discreto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Espaço de ação discreto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foco-em-estabelecer-uma-referencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foco em estabelecer uma referência
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quando-usar-sac-soft-actor-critic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quando usar SAC (Soft Actor-Critic)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quando usar SAC (Soft Actor-Critic)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#espaco-de-acao-continuo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Espaço de ação contínuo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reutilizacao-de-experiencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reutilização de experiências
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exploracao-e-prevencao-de-estagnacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploração e prevenção de estagnação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#como-decidir-entre-ppo-e-sac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como decidir entre PPO e SAC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrategia-de-experimentacao-e-avaliacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia de experimentação e avaliação
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estratégia de experimentação e avaliação">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-estabeleca-um-modelo-de-referencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Estabeleça um modelo de referência
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-modifique-uma-variavel-por-vez" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Modifique uma variável por vez
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-avalie-mais-do-que-a-recompensa-acumulada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Avalie mais do que a recompensa acumulada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-utilize-os-logs-para-investigar-o-comportamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Utilize os logs para investigar o comportamento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-documente-os-resultados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Documente os resultados
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proxima-etapa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Próxima etapa
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analise-de-logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Análise de Logs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../desafios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Desafios Práticos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requisito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-requisito
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otimizando-a-funcao-de-recompensa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Otimizando a Função de Recompensa
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Otimizando a Função de Recompensa">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dica-1-nao-programe-explicitamente-as-acoes-do-carro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 1: Não programe explicitamente as ações do carro
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 1: Não programe explicitamente as ações do carro">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nota-sobre-generalizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nota sobre generalização
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-2-comece-simples-e-priorize-a-conclusao-da-pista" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 2: Comece simples e priorize a conclusão da pista
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 2: Comece simples e priorize a conclusão da pista">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-recomendada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia recomendada
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-3-combine-as-recompensas-com-cuidado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 3: Combine as recompensas com cuidado
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 3: Combine as recompensas com cuidado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-soma-simples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Soma simples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-multiplicacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Multiplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-potenciacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Potenciação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-4-utilize-pesos-para-expressar-prioridades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 4: Utilize pesos para expressar prioridades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-5-evite-recompensar-a-velocidade-sem-considerar-o-contexto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 5: Evite recompensar a velocidade sem considerar o contexto
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 5: Evite recompensar a velocidade sem considerar o contexto">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#abordagem-condicional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abordagem condicional
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#abordagem-indireta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abordagem indireta
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-6-considere-recompensar-a-conclusao-da-pista" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 6: Considere recompensar a conclusão da pista
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 6: Considere recompensar a conclusão da pista">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bonus-por-conclusao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bônus por conclusão
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bonus-dinamico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bônus dinâmico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aviso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aviso
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-7-penalize-comportamentos-que-comprometem-o-objetivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 7: Penalize comportamentos que comprometem o objetivo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 7: Penalize comportamentos que comprometem o objetivo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#como-penalizar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como penalizar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#por-que-nao-tratar-zero-ou-valores-negativos-como-universalmente-proibidos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que não tratar zero ou valores negativos como universalmente proibidos?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-8-mantenha-uma-escala-de-recompensas-coerente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 8: Mantenha uma escala de recompensas coerente
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 8: Mantenha uma escala de recompensas coerente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recompensas-desproporcionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recompensas desproporcionais
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#penalizacoes-desproporcionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Penalizações desproporcionais
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#como-avaliar-a-escala" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como avaliar a escala
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otimizando-hiperparametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Otimizando Hiperparâmetros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Otimizando Hiperparâmetros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dica-9-hiperparametros-nao-fazem-milagres" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 9: Hiperparâmetros não fazem milagres
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-10-o-modelo-piorou-investigue-antes-de-modificar-os-parametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 10: O modelo piorou? Investigue antes de modificar os parâmetros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 10: O modelo piorou? Investigue antes de modificar os parâmetros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-diagnostico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia de diagnóstico
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica-11-conheca-os-principais-hiperparametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dica 11: Conheça os principais hiperparâmetros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dica 11: Conheça os principais hiperparâmetros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taxa-de-aprendizado-learning-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Taxa de aprendizado (Learning Rate)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tamanho-do-lote-batch-size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tamanho do lote (Batch Size)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#numero-de-epocas-number-of-epochs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Número de épocas (Number of Epochs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#numero-de-episodios-entre-atualizacoes-da-politica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Número de episódios entre atualizações da política
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#entropia-e-exploracao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entropia e exploração
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fator-de-desconto-discount-factor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fator de desconto (Discount Factor)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#funcao-de-perda-loss-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Função de perda (Loss Type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clonagem-de-modelos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clonagem de modelos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#algoritmos-de-aprendizado-ppo-vs-sac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Algoritmos de Aprendizado: PPO vs. SAC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Algoritmos de Aprendizado: PPO vs. SAC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-diferenca-central-on-policy-vs-off-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A diferença central: On-Policy vs. Off-Policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quando-usar-ppo-proximal-policy-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quando usar PPO (Proximal Policy Optimization)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quando usar PPO (Proximal Policy Optimization)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#para-iniciantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Para iniciantes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#espaco-de-acao-discreto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Espaço de ação discreto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foco-em-estabelecer-uma-referencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foco em estabelecer uma referência
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quando-usar-sac-soft-actor-critic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quando usar SAC (Soft Actor-Critic)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quando usar SAC (Soft Actor-Critic)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#espaco-de-acao-continuo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Espaço de ação contínuo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reutilizacao-de-experiencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reutilização de experiências
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exploracao-e-prevencao-de-estagnacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploração e prevenção de estagnação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#como-decidir-entre-ppo-e-sac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como decidir entre PPO e SAC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrategia-de-experimentacao-e-avaliacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia de experimentação e avaliação
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estratégia de experimentação e avaliação">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-estabeleca-um-modelo-de-referencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Estabeleça um modelo de referência
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-modifique-uma-variavel-por-vez" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Modifique uma variável por vez
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-avalie-mais-do-que-a-recompensa-acumulada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Avalie mais do que a recompensa acumulada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-utilize-os-logs-para-investigar-o-comportamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Utilize os logs para investigar o comportamento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-documente-os-resultados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Documente os resultados
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proxima-etapa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Próxima etapa
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="funcao-de-recompensa-hiperparametros-e-algoritmos-de-aprendizado">Função de Recompensa, Hiperparâmetros e Algoritmos de Aprendizado<a class="headerlink" href="#funcao-de-recompensa-hiperparametros-e-algoritmos-de-aprendizado" title="Permanent link">&para;</a></h1>
+<p>Este guia tem como foco dicas práticas de otimização para a criação de modelos no AWS DeepRacer. Serão abordadas estratégias para construir boas funções de recompensa, escolher hiperparâmetros adequados, interpretar o comportamento dos modelos e decidir entre os algoritmos PPO e SAC.</p>
+<p>O objetivo não é apresentar configurações universalmente ideais, mas fornecer princípios que ajudem você a formular hipóteses, conduzir experimentos e identificar quais ajustes realmente melhoram o desempenho do agente.</p>
+<h2 id="pre-requisito">Pré-requisito<a class="headerlink" href="#pre-requisito" title="Permanent link">&para;</a></h2>
+<p>Este documento é focado em otimização. Recomenda-se a leitura prévia do módulo <a href="../fundamentos-rl/">Conceitos Fundamentais de Aprendizagem por Reforço</a>, pois o entendimento dos conceitos de política, retorno cumulativo, espaço de ação e função de recompensa é importante para aplicar as estratégias apresentadas.</p>
+<p>Os procedimentos e as configurações disponíveis podem variar conforme a implementação do DeepRacer utilizada. Consulte a documentação correspondente ao ambiente de treinamento antes de reproduzir os exemplos.</p>
+<h2 id="otimizando-a-funcao-de-recompensa">Otimizando a Função de Recompensa<a class="headerlink" href="#otimizando-a-funcao-de-recompensa" title="Permanent link">&para;</a></h2>
+<p>A função de recompensa é um dos componentes mais importantes do modelo. Ela traduz o objetivo desejado em sinais numéricos utilizados pelo algoritmo durante o treinamento.</p>
+<p>Uma função bem definida deve incentivar comportamentos que contribuam para o objetivo final, sem criar conflitos desnecessários entre os diferentes critérios de desempenho.</p>
+<h3 id="dica-1-nao-programe-explicitamente-as-acoes-do-carro">Dica 1: Não programe explicitamente as ações do carro<a class="headerlink" href="#dica-1-nao-programe-explicitamente-as-acoes-do-carro" title="Permanent link">&para;</a></h3>
+<p>Uma das diretrizes mais importantes é evitar transformar a função de recompensa em uma sequência de instruções que determine antecipadamente cada movimento do veículo.</p>
+<p>Por exemplo, em vez de escrever regras que determinem exatamente quando virar à esquerda em cada trecho de uma pista específica, procure definir os comportamentos desejados e os critérios que permitem avaliá-los.</p>
+<p>Seu papel é estabelecer incentivos coerentes, como permanecer dentro dos limites da pista, manter uma trajetória controlada e alcançar uma velocidade adequada. O algoritmo utilizará as experiências coletadas durante o treinamento para procurar uma política que maximize as recompensas.</p>
+<p>Isso não significa que condicionais (<code>if</code>) devam ser evitadas. Elas podem ser úteis para distinguir situações, identificar comportamentos indesejados e aplicar recompensas diferentes conforme as condições do ambiente.</p>
+<p>O importante é que essas condições avaliem características relevantes da situação, em vez de apenas reproduzir uma sequência rígida de movimentos.</p>
+<h4 id="nota-sobre-generalizacao">Nota sobre generalização<a class="headerlink" href="#nota-sobre-generalizacao" title="Permanent link">&para;</a></h4>
+<p>Uma função excessivamente dependente de posições ou movimentos específicos de determinada pista pode limitar a capacidade do agente de lidar com situações diferentes.</p>
+<div class="admonition info">
+<p class="admonition-title">Nota conceitual</p>
+<p>Entretanto, evitar regras rígidas não garante generalização. O desempenho em outras pistas também depende das experiências de treinamento, das observações disponíveis, do espaço de ação e das características do ambiente.</p>
+</div>
+<p>Por isso, avalie o modelo nas condições para as quais ele foi desenvolvido e, quando possível, teste seu comportamento em pistas ou situações diferentes. Não presuma que um modelo bem-sucedido em uma pista apresentará o mesmo desempenho em todas as outras.</p>
+<h3 id="dica-2-comece-simples-e-priorize-a-conclusao-da-pista">Dica 2: Comece simples e priorize a conclusão da pista<a class="headerlink" href="#dica-2-comece-simples-e-priorize-a-conclusao-da-pista" title="Permanent link">&para;</a></h3>
+<p>É tentador buscar o menor tempo de volta logo na primeira versão da função de recompensa. Entretanto, otimizar a velocidade antes de estabelecer um comportamento consistente pode tornar o treinamento mais difícil de interpretar.</p>
+<p>Se a velocidade receber uma recompensa elevada sem considerar adequadamente o risco de sair da pista, o agente poderá aprender a acelerar em situações nas quais isso prejudica o resultado final.</p>
+<p>Por exemplo, um veículo pode obter uma recompensa imediata por alcançar uma velocidade elevada em uma reta, mas sair da pista na curva seguinte. Nesse caso, a função favoreceu um comportamento que parecia vantajoso no curto prazo, mas não contribuiu para completar o percurso.</p>
+<h4 id="estrategia-recomendada">Estratégia recomendada<a class="headerlink" href="#estrategia-recomendada" title="Permanent link">&para;</a></h4>
+<p>Divida a otimização em etapas:</p>
+<ol>
+<li><strong>Estabeleça um comportamento básico:</strong> incentive o agente a permanecer na pista e completar o percurso.</li>
+<li><strong>Avalie a consistência:</strong> verifique se o modelo consegue completar voltas de maneira repetida, e não apenas em uma tentativa isolada.</li>
+<li><strong>Introduza melhorias graduais:</strong> depois de obter um comportamento estável, investigue como aumentar a velocidade sem comprometer a conclusão da pista.</li>
+<li><strong>Compare os resultados:</strong> avalie o modelo original e a nova versão sob condições equivalentes.</li>
+</ol>
+<p>É possível limitar inicialmente a velocidade máxima permitida no espaço de ação para reduzir a complexidade do problema. Valores entre 1 e 2 m/s podem servir como ponto de partida em determinados experimentos, mas não são uma faixa ideal universal: a velocidade apropriada depende da pista, da modalidade, das ações disponíveis e do objetivo do treinamento.</p>
+<p>Quando o ambiente permitir, você também poderá clonar um modelo bem-sucedido e utilizar a nova versão como ponto de partida para a próxima etapa. Antes de treinar, confira quais parâmetros e artefatos foram preservados na clonagem.</p>
+<h3 id="dica-3-combine-as-recompensas-com-cuidado">Dica 3: Combine as recompensas com cuidado<a class="headerlink" href="#dica-3-combine-as-recompensas-com-cuidado" title="Permanent link">&para;</a></h3>
+<p>Completar uma pista de maneira consistente e rápida pode exigir que o agente equilibre diferentes objetivos, como manter uma trajetória adequada, controlar a velocidade e evitar saídas da pista.</p>
+<p>Uma estratégia é construir sub-recompensas para aspectos específicos do comportamento e combiná-las em uma recompensa final.</p>
+<p>Considere dois exemplos abstratos:</p>
+<ul>
+<li><code>recompensa_centro</code>: representa o incentivo para manter uma posição adequada na pista.</li>
+<li><code>recompensa_velocidade</code>: representa o incentivo para atingir uma velocidade desejada.</li>
+</ul>
+<p>Para que os exemplos a seguir sejam comparáveis, considere que as duas sub-recompensas estejam normalizadas entre 0 e 1, em que valores maiores representam resultados mais desejáveis.</p>
+<p>Existem diferentes maneiras de combiná-las.</p>
+<h4 id="1-soma-simples">1. Soma simples<a class="headerlink" href="#1-soma-simples" title="Permanent link">&para;</a></h4>
+<p>A soma permite que uma recompensa compense parcialmente a outra.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">recompensa_total</span> <span class="o">=</span> <span class="n">recompensa_centro</span> <span class="o">+</span> <span class="n">recompensa_velocidade</span>
+</span></code></pre></div>
+<p><strong>Ponto de atenção:</strong> o agente pode obter uma pontuação razoável mesmo quando apresenta um resultado ruim em um dos objetivos.</p>
+<p>Por exemplo, uma recompensa elevada por velocidade pode compensar parcialmente uma recompensa baixa por posicionamento. O modelo pode, assim, receber um sinal aparentemente favorável apesar de apresentar um comportamento indesejado.</p>
+<h4 id="2-multiplicacao">2. Multiplicação<a class="headerlink" href="#2-multiplicacao" title="Permanent link">&para;</a></h4>
+<p>A multiplicação faz com que as sub-recompensas influenciem conjuntamente o resultado final.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">recompensa_total</span> <span class="o">=</span> <span class="n">recompensa_centro</span> <span class="o">*</span> <span class="n">recompensa_velocidade</span>
+</span></code></pre></div>
+<p><strong>Ponto de atenção:</strong> quando uma das sub-recompensas se aproxima de zero, o resultado da multiplicação também se aproxima de zero.</p>
+<p>Isso pode ser útil quando se deseja exigir um desempenho razoável em diferentes critérios, mas também pode dificultar o aprendizado quando uma das recompensas permanece muito baixa no início do treinamento.</p>
+<h4 id="3-potenciacao">3. Potenciação<a class="headerlink" href="#3-potenciacao" title="Permanent link">&para;</a></h4>
+<p>A potenciação pode tornar a recompensa mais seletiva em relação aos valores elevados.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">recompensa_total</span> <span class="o">=</span> <span class="n">recompensa_base</span> <span class="o">**</span> <span class="mi">2</span>
+</span></code></pre></div>
+<p>Para valores de <code>recompensa_base</code> entre 0 e 1, essa transformação reduz proporcionalmente os valores menores e mantém inalterado o valor 1.</p>
+<p><strong>Ponto de atenção:</strong> a transformação também diminui a intensidade de muitas recompensas intermediárias. Se o agente encontrar poucas situações que produzam valores elevados, o sinal de aprendizado poderá ficar menos informativo.</p>
+<p>A potenciação não é necessariamente superior aos outros métodos. Sua utilidade depende da escala original da recompensa e do comportamento que se deseja incentivar.</p>
+<p><strong>Recomendação:</strong> comece com uma função simples. Adicione novas sub-recompensas somente quando houver uma hipótese clara sobre o problema que cada uma pretende resolver. Quanto mais componentes forem introduzidos simultaneamente, mais difícil será identificar a origem de uma melhoria ou regressão.</p>
+<h3 id="dica-4-utilize-pesos-para-expressar-prioridades">Dica 4: Utilize pesos para expressar prioridades<a class="headerlink" href="#dica-4-utilize-pesos-para-expressar-prioridades" title="Permanent link">&para;</a></h3>
+<p>Quando diferentes sub-recompensas possuem importâncias distintas, é possível utilizar pesos para controlar sua contribuição para o resultado final.</p>
+<p>Por exemplo:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">PESO_CENTRO</span> <span class="o">=</span> <span class="mf">0.7</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">PESO_VELOCIDADE</span> <span class="o">=</span> <span class="mf">0.3</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">recompensa_centro_ponderada</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">PESO_CENTRO</span> <span class="o">*</span> <span class="n">recompensa_centro</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">)</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">recompensa_velocidade_ponderada</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">PESO_VELOCIDADE</span> <span class="o">*</span> <span class="n">recompensa_velocidade</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">)</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">recompensa_total</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="n">recompensa_centro_ponderada</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="o">+</span> <span class="n">recompensa_velocidade_ponderada</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="p">)</span>
+</span></code></pre></div>
+<p>Nesse exemplo, a recompensa relacionada ao posicionamento possui um peso maior do que a recompensa relacionada à velocidade.</p>
+<p>Quando as sub-recompensas estão na mesma escala e os pesos somam 1, a combinação funciona como uma média ponderada. Isso facilita interpretar a contribuição relativa de cada componente.</p>
+<p>Entretanto, os pesos não garantem que o agente apresentará o comportamento correspondente à prioridade desejada. O efeito depende também da distribuição dos valores retornados por cada sub-recompensa e de como esses incentivos interagem durante o treinamento.</p>
+<p>Altere os pesos gradualmente e compare os resultados. Evite modificar vários pesos simultaneamente sem registrar as alterações e suas consequências.</p>
+<h3 id="dica-5-evite-recompensar-a-velocidade-sem-considerar-o-contexto">Dica 5: Evite recompensar a velocidade sem considerar o contexto<a class="headerlink" href="#dica-5-evite-recompensar-a-velocidade-sem-considerar-o-contexto" title="Permanent link">&para;</a></h3>
+<p>Recompensar diretamente a velocidade, por exemplo utilizando <code>recompensa_velocidade = speed</code>, pode incentivar o agente a acelerar mesmo quando isso aumenta o risco de sair da pista.</p>
+<p>O problema não está em recompensar a velocidade, mas em ignorar as demais consequências desse comportamento.</p>
+<h4 id="abordagem-condicional">Abordagem condicional<a class="headerlink" href="#abordagem-condicional" title="Permanent link">&para;</a></h4>
+<p>Conceda um bônus de velocidade quando outras condições relevantes também estiverem sendo atendidas.</p>
+<p>Por exemplo, a função pode considerar características relacionadas à posição na pista, ao controle da direção e à permanência dentro dos limites do percurso.</p>
+<p>Essa abordagem permite que a velocidade seja incentivada de acordo com o contexto, em vez de receber sempre o mesmo tratamento.</p>
+<p>Entretanto, condições excessivamente rígidas também podem restringir comportamentos úteis. Os critérios precisam ser avaliados de acordo com o objetivo e com os dados disponíveis.</p>
+<h4 id="abordagem-indireta">Abordagem indireta<a class="headerlink" href="#abordagem-indireta" title="Permanent link">&para;</a></h4>
+<p>Outra possibilidade é priorizar comportamentos que contribuem para uma corrida eficiente, como completar a pista de forma consistente, evitando recompensar a velocidade de maneira isolada.</p>
+<p>Nesse caso, a velocidade ainda pode ser utilizada como critério de otimização, mas seu efeito deve ser analisado em conjunto com o desempenho global do modelo.</p>
+<p><strong>Ponto de atenção:</strong> nenhuma dessas abordagens garante, por si só, uma boa estratégia de direção. Uma função de recompensa precisa ser validada observando o comportamento que o agente realmente aprende.</p>
+<h3 id="dica-6-considere-recompensar-a-conclusao-da-pista">Dica 6: Considere recompensar a conclusão da pista<a class="headerlink" href="#dica-6-considere-recompensar-a-conclusao-da-pista" title="Permanent link">&para;</a></h3>
+<p>Uma recompensa adicional pela conclusão do percurso pode ajudar a diferenciar uma volta completa de uma tentativa interrompida antes do final.</p>
+<p>Durante um episódio, o agente toma diversas decisões. Se a função valorizar apenas comportamentos intermediários, ele poderá acumular recompensas sem completar a tarefa.</p>
+<p>Uma recompensa associada à conclusão pode tornar esse objetivo mais explícito.</p>
+<h4 id="bonus-por-conclusao">Bônus por conclusão<a class="headerlink" href="#bonus-por-conclusao" title="Permanent link">&para;</a></h4>
+<p>No DeepRacer, o parâmetro <code>progress</code> representa a porcentagem da pista completada. Quando estiver disponível e for apropriado à implementação, ele poderá ser utilizado para identificar a conclusão do percurso.</p>
+<p>Por exemplo, a lógica conceitual de um bônus adicional pode ser representada assim:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">BONUS_CONCLUSAO</span> <span class="o">=</span> <span class="mf">5.0</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">"progress"</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">100.0</span><span class="p">:</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">recompensa_total</span> <span class="o">+=</span> <span class="n">BONUS_CONCLUSAO</span>
+</span></code></pre></div>
+<p>Esse trecho é apenas ilustrativo e pressupõe que <code>recompensa_total</code> já tenha sido calculada anteriormente. O valor do bônus deve ser definido de acordo com a escala da função utilizada.</p>
+<h4 id="bonus-dinamico">Bônus dinâmico<a class="headerlink" href="#bonus-dinamico" title="Permanent link">&para;</a></h4>
+<p>Outra possibilidade é relacionar o bônus ao número de passos necessários para concluir a pista. Em determinadas configurações, isso pode favorecer trajetórias que concluem o percurso em menos passos.</p>
+<p>Entretanto, a redução no número de passos não representa necessariamente uma redução proporcional no tempo de volta. O resultado também depende da velocidade e da dinâmica do veículo.</p>
+<h4 id="aviso">Aviso<a class="headerlink" href="#aviso" title="Permanent link">&para;</a></h4>
+<p>Um bônus excessivamente elevado pode dominar o restante do sinal de recompensa. Isso não garante um aprendizado melhor e pode dificultar a avaliação da contribuição dos outros critérios.</p>
+<p>Além disso, uma recompensa terminal não elimina completamente o problema de atribuição de crédito: o agente ainda precisa aprender quais decisões anteriores contribuíram para o resultado final.</p>
+<p>Utilize o bônus como parte da estratégia de recompensa, e não como substituto de uma função coerente para o restante do percurso.</p>
+<h3 id="dica-7-penalize-comportamentos-que-comprometem-o-objetivo">Dica 7: Penalize comportamentos que comprometem o objetivo<a class="headerlink" href="#dica-7-penalize-comportamentos-que-comprometem-o-objetivo" title="Permanent link">&para;</a></h3>
+<p>Comportamentos como sair da pista ou colidir com obstáculos podem impedir a conclusão do percurso e devem ser tratados de maneira coerente com o objetivo do treinamento.</p>
+<p>Se o agente receber recompensas elevadas por acelerar ou manter determinada trajetória, mas não sofrer consequências adequadas quando sai da pista, a função poderá incentivar comportamentos incompatíveis com uma corrida consistente.</p>
+<h4 id="como-penalizar">Como penalizar<a class="headerlink" href="#como-penalizar" title="Permanent link">&para;</a></h4>
+<p>Uma abordagem utilizada em exemplos de funções de recompensa do DeepRacer é retornar um valor muito baixo, mas positivo, para determinadas situações indesejadas.</p>
+<p>Por exemplo:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">reward_function</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">[</span><span class="s2">"all_wheels_on_track"</span><span class="p">]:</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>        <span class="k">return</span> <span class="mf">1e-3</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="k">return</span> <span class="mf">1.0</span>
+</span></code></pre></div>
+<p>Nesse exemplo, o modelo recebe uma recompensa baixa quando todas as rodas não estão dentro da pista e uma recompensa maior quando o veículo permanece dentro dos limites.</p>
+<p>O valor <code>1e-3</code>, equivalente a <code>0.001</code>, é uma escolha possível, não um valor obrigatório para todas as situações.</p>
+<p>Dependendo do problema, uma função pode utilizar outras penalizações ou recompensas. O importante é considerar a escala dos valores, as características do algoritmo e a consequência que se deseja representar.</p>
+<h4 id="por-que-nao-tratar-zero-ou-valores-negativos-como-universalmente-proibidos">Por que não tratar zero ou valores negativos como universalmente proibidos?<a class="headerlink" href="#por-que-nao-tratar-zero-ou-valores-negativos-como-universalmente-proibidos" title="Permanent link">&para;</a></h4>
+<p>Recompensas nulas ou negativas não são, por si só, matematicamente inválidas em Aprendizagem por Reforço.</p>
+<p>Sua adequação depende da implementação, do algoritmo e da forma como os valores influenciam o treinamento. Portanto, não é correto afirmar que qualquer recompensa nula ou negativa necessariamente desestabilizará o modelo.</p>
+<p>Ao utilizar exemplos ou recomendações desenvolvidos para uma implementação específica do DeepRacer, siga as convenções documentadas para aquele ambiente e verifique os resultados.</p>
+<h3 id="dica-8-mantenha-uma-escala-de-recompensas-coerente">Dica 8: Mantenha uma escala de recompensas coerente<a class="headerlink" href="#dica-8-mantenha-uma-escala-de-recompensas-coerente" title="Permanent link">&para;</a></h3>
+<p>A escala das recompensas influencia o sinal utilizado pelo algoritmo durante o treinamento.</p>
+<p>Se uma sub-recompensa apresentar valores muito maiores do que os demais componentes, ela poderá dominar a combinação final e fazer com que outros objetivos tenham pouca influência no resultado.</p>
+<p>Por isso, procure manter os componentes em escalas compatíveis quando eles forem combinados diretamente.</p>
+<h4 id="recompensas-desproporcionais">Recompensas desproporcionais<a class="headerlink" href="#recompensas-desproporcionais" title="Permanent link">&para;</a></h4>
+<p>Imagine uma função em que a recompensa por velocidade seja centenas ou milhares de vezes maior do que a recompensa por permanecer na pista.</p>
+<p>Nesse caso, a soma poderá favorecer a velocidade mesmo quando o veículo apresentar um comportamento inadequado em relação ao percurso.</p>
+<p>O problema não é existir um valor absoluto específico, mas a relação entre os componentes e seus efeitos sobre o objetivo final.</p>
+<h4 id="penalizacoes-desproporcionais">Penalizações desproporcionais<a class="headerlink" href="#penalizacoes-desproporcionais" title="Permanent link">&para;</a></h4>
+<p>Uma penalização muito forte pode dominar os demais incentivos. Dependendo da função e do treinamento, isso poderá dificultar a descoberta de estratégias úteis ou favorecer um comportamento excessivamente conservador.</p>
+<p>Entretanto, não existe uma relação universal segundo a qual penalizações severas sempre tornam o modelo lento ou incapaz de explorar. O resultado precisa ser verificado experimentalmente.</p>
+<h4 id="como-avaliar-a-escala">Como avaliar a escala<a class="headerlink" href="#como-avaliar-a-escala" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Analise os valores retornados por cada sub-recompensa.</li>
+<li>Verifique a contribuição de cada componente para a recompensa final.</li>
+<li>Evite combinar diretamente valores que estejam em escalas muito diferentes sem considerar suas proporções.</li>
+<li>Compare o comportamento do agente antes e depois de alterações na função.</li>
+</ul>
+<p>Manter recompensas coerentes ajuda a interpretar o treinamento, mas não garante estabilidade por si só. A escala adequada depende do algoritmo, da implementação e das características do problema.</p>
+<h2 id="otimizando-hiperparametros">Otimizando Hiperparâmetros<a class="headerlink" href="#otimizando-hiperparametros" title="Permanent link">&para;</a></h2>
+<p>Os hiperparâmetros são configurações que influenciam a forma como o algoritmo aprende. Diferentemente dos parâmetros da rede neural ajustados durante o treinamento, eles são definidos pelo usuário conforme as opções disponíveis no ambiente.</p>
+<p>A função de recompensa define o objetivo que o agente tentará alcançar. Os hiperparâmetros influenciam o processo utilizado para aprender uma política que maximize esse objetivo.</p>
+<p>Essa distinção ajuda a evitar ajustes sem uma hipótese clara sobre o problema observado.</p>
+<h3 id="dica-9-hiperparametros-nao-fazem-milagres">Dica 9: Hiperparâmetros não fazem milagres<a class="headerlink" href="#dica-9-hiperparametros-nao-fazem-milagres" title="Permanent link">&para;</a></h3>
+<p>A função de recompensa e os hiperparâmetros possuem papéis diferentes.</p>
+<p>Se a função de recompensa incentiva um comportamento indesejado, alterar a taxa de aprendizado ou o tamanho do lote não corrigirá necessariamente o problema.</p>
+<p>Por exemplo, se o modelo recebe incentivos desproporcionais para acelerar, ele pode continuar buscando velocidade mesmo após diversas alterações nos parâmetros de treinamento.</p>
+<p>Antes de ajustar os hiperparâmetros, procure responder às seguintes perguntas:</p>
+<ul>
+<li>A função de recompensa representa adequadamente o objetivo?</li>
+<li>O espaço de ação permite executar os comportamentos desejados?</li>
+<li>Os resultados observados correspondem às recompensas atribuídas?</li>
+<li>Existem evidências de instabilidade ou apenas oscilações naturais do treinamento?</li>
+</ul>
+<p>Essa investigação ajuda a separar problemas relacionados à modelagem da recompensa daqueles associados ao processo de otimização.</p>
+<h3 id="dica-10-o-modelo-piorou-investigue-antes-de-modificar-os-parametros">Dica 10: O modelo piorou? Investigue antes de modificar os parâmetros<a class="headerlink" href="#dica-10-o-modelo-piorou-investigue-antes-de-modificar-os-parametros" title="Permanent link">&para;</a></h3>
+<p>Quando a curva de recompensa começa a cair, é comum alterar imediatamente a taxa de aprendizado, o tamanho do lote ou outros hiperparâmetros.</p>
+<p>Entretanto, uma queda na recompensa não possui uma causa única. Ela pode estar relacionada à função de recompensa, às atualizações da política, à exploração, à variabilidade entre episódios ou a outras características da configuração.</p>
+<h4 id="estrategia-de-diagnostico">Estratégia de diagnóstico<a class="headerlink" href="#estrategia-de-diagnostico" title="Permanent link">&para;</a></h4>
+<p>Antes de realizar alterações, siga uma sequência de investigação:</p>
+<ol>
+<li><strong>Examine a curva de recompensa:</strong> verifique se a queda é pontual ou se representa uma tendência persistente.</li>
+<li><strong>Avalie o comportamento do veículo:</strong> observe se o agente está saindo da pista, apresentando movimentos instáveis ou deixando de progredir.</li>
+<li><strong>Analise os logs:</strong> procure evidências que ajudem a identificar em quais situações o desempenho se deteriora.</li>
+<li><strong>Revise a função de recompensa:</strong> confira se o sinal recebido pelo agente corresponde ao comportamento desejado.</li>
+<li><strong>Investigue os hiperparâmetros:</strong> se os dados indicarem um problema no processo de otimização, escolha um ajuste compatível com a hipótese formulada.</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Dica de experimentação</p>
+<p>Evite alterar várias configurações de uma vez. Quando múltiplos parâmetros são modificados simultaneamente, fica mais difícil identificar qual alteração contribuiu para a melhoria ou piora do resultado.</p>
+</div>
+<h3 id="dica-11-conheca-os-principais-hiperparametros">Dica 11: Conheça os principais hiperparâmetros<a class="headerlink" href="#dica-11-conheca-os-principais-hiperparametros" title="Permanent link">&para;</a></h3>
+<p>Os hiperparâmetros disponíveis variam conforme o algoritmo e a implementação do DeepRacer utilizada. Na solução oficial DeepRacer on AWS, PPO e SAC possuem conjuntos de configurações diferentes.</p>
+<p>A seguir estão alguns dos parâmetros mais relevantes para compreender o processo de treinamento.</p>
+<h4 id="taxa-de-aprendizado-learning-rate">Taxa de aprendizado (<em>Learning Rate</em>)<a class="headerlink" href="#taxa-de-aprendizado-learning-rate" title="Permanent link">&para;</a></h4>
+<p>A taxa de aprendizado controla a magnitude dos ajustes realizados nos parâmetros do modelo durante a otimização.</p>
+<p><strong>Valor alto:</strong> pode produzir atualizações excessivas e tornar o treinamento instável.</p>
+<p><strong>Valor baixo:</strong> pode resultar em atualizações menores e retardar a aprendizagem.</p>
+<p>O efeito depende do algoritmo e das demais configurações. Na interface documentada da solução oficial, a taxa de aprendizado é apresentada entre os parâmetros de SAC; a disponibilidade desse ajuste para outros ambientes depende da implementação.</p>
+<p>Quando o parâmetro estiver disponível, compare valores de forma controlada e verifique se existe uma alteração consistente no comportamento ou nas métricas de avaliação.</p>
+<h4 id="tamanho-do-lote-batch-size">Tamanho do lote (<em>Batch Size</em>)<a class="headerlink" href="#tamanho-do-lote-batch-size" title="Permanent link">&para;</a></h4>
+<p>O tamanho do lote determina quantas experiências são utilizadas em uma atualização do treinamento.</p>
+<p>Lotes maiores podem produzir estimativas menos ruidosas em determinadas condições, mas também podem exigir mais memória e processamento. Lotes menores podem permitir atualizações mais frequentes, sem garantir necessariamente uma aprendizagem melhor ou mais rápida.</p>
+<p>Não existe uma regra universal segundo a qual se devam utilizar exclusivamente potências de 2. Valores disponíveis e adequados dependem das opções da implementação e das condições do experimento.</p>
+<h4 id="numero-de-epocas-number-of-epochs">Número de épocas (<em>Number of Epochs</em>)<a class="headerlink" href="#numero-de-epocas-number-of-epochs" title="Permanent link">&para;</a></h4>
+<p>Nas configurações do PPO que disponibilizam esse parâmetro, o número de épocas indica quantas vezes o algoritmo utiliza o mesmo conjunto de experiências durante as atualizações.</p>
+<p>Um número maior de épocas pode aumentar o aproveitamento dos dados coletados, mas também pode favorecer atualizações excessivas em determinadas configurações.</p>
+<p>Reduzir as épocas não garante maior generalização. Se houver suspeita de <em>overfitting</em> ou de degradação da política, examine as métricas, o comportamento do agente e os demais parâmetros antes de decidir pela alteração.</p>
+<p>Na solução oficial DeepRacer on AWS, esse parâmetro faz parte das configurações de PPO.</p>
+<h4 id="numero-de-episodios-entre-atualizacoes-da-politica">Número de episódios entre atualizações da política<a class="headerlink" href="#numero-de-episodios-entre-atualizacoes-da-politica" title="Permanent link">&para;</a></h4>
+<p>Na configuração oficial de PPO, é possível definir quantos episódios de experiência são coletados antes de uma atualização da política.</p>
+<p>Esse parâmetro influencia a quantidade de experiências reunidas para a atualização. Seu efeito depende também do tamanho dos episódios, do custo de coleta de dados e das demais configurações de treinamento.</p>
+<p>Não deve ser confundido com o número de épocas: um parâmetro determina quantas experiências são coletadas antes da atualização, enquanto o outro determina quantas vezes o conjunto coletado é utilizado durante o processo de atualização.</p>
+<h4 id="entropia-e-exploracao">Entropia e exploração<a class="headerlink" href="#entropia-e-exploracao" title="Permanent link">&para;</a></h4>
+<p>A entropia está relacionada à diversidade das ações selecionadas pela política.</p>
+<p>No PPO, a entropia participa do processo de otimização como um mecanismo de regularização que incentiva a exploração. Uma política com maior entropia tende a distribuir suas escolhas entre diferentes ações, enquanto uma política com menor entropia tende a concentrar suas escolhas em ações mais prováveis.</p>
+<p>No SAC, a exploração está incorporada ao objetivo de maximização da entropia. O parâmetro <code>SAC alpha</code> controla a intensidade do incentivo associado à exploração na implementação oficial.</p>
+<p><strong>Ponto de atenção:</strong> os mecanismos não são idênticos. O parâmetro <code>SAC alpha</code> não deve ser interpretado como se tivesse necessariamente o mesmo efeito de um coeficiente de entropia do PPO.</p>
+<p>Além disso, maior exploração não é sempre melhor. Ela pode ajudar o agente a descobrir novas estratégias, mas também pode aumentar a variabilidade do comportamento durante o treinamento.</p>
+<h4 id="fator-de-desconto-discount-factor">Fator de desconto (<em>Discount Factor</em>)<a class="headerlink" href="#fator-de-desconto-discount-factor" title="Permanent link">&para;</a></h4>
+<p>O fator de desconto, representado por <span class="arithmatex">\(\gamma\)</span>, determina a importância atribuída às recompensas futuras no cálculo do retorno cumulativo.</p>
+<p>Valores maiores dão relativamente mais importância a recompensas distantes, enquanto valores menores favorecem recompensas mais imediatas.</p>
+<p>O parâmetro influencia o horizonte temporal considerado pelo agente, mas seu efeito sobre o desempenho depende do problema e das demais configurações.</p>
+<p>Na solução oficial DeepRacer on AWS, o fator de desconto está disponível entre as configurações de SAC.</p>
+<h4 id="funcao-de-perda-loss-type">Função de perda (<em>Loss Type</em>)<a class="headerlink" href="#funcao-de-perda-loss-type" title="Permanent link">&para;</a></h4>
+<p>O tipo de função de perda define como determinados erros de previsão são quantificados durante o treinamento.</p>
+<p>Na solução oficial DeepRacer on AWS, a configuração de SAC permite escolher entre Huber loss e erro quadrático médio (<em>Mean Squared Error</em>).</p>
+<p>A Huber loss trata erros pequenos de forma quadrática e reduz a influência quadrática de erros grandes, enquanto o erro quadrático médio penaliza os erros de acordo com seu quadrado.</p>
+<p>A escolha influencia a forma como os erros contribuem para a otimização, mas não existe uma opção universalmente superior para todos os experimentos. É necessário avaliar o comportamento do treinamento e a adequação à configuração utilizada.</p>
+<h4 id="clonagem-de-modelos">Clonagem de modelos<a class="headerlink" href="#clonagem-de-modelos" title="Permanent link">&para;</a></h4>
+<p>A clonagem pode ser útil quando você deseja desenvolver uma nova versão a partir de um modelo existente, evitando começar sempre do zero.</p>
+<p>Uma estratégia prática é manter um modelo de referência e criar novas versões para investigar alterações específicas, como a função de recompensa ou o espaço de ação.</p>
+<div class="admonition warning">
+<p class="admonition-title">Atenção aos requisitos do ambiente</p>
+<p>Entretanto, não presuma que todos os estados internos do treinamento ou todos os hiperparâmetros serão preservados da mesma maneira em qualquer implementação. Confira quais elementos foram copiados e revise a configuração antes de iniciar o próximo experimento.</p>
+</div>
+<p>A queda inicial no desempenho de um modelo clonado também não possui uma causa universal. Ela pode estar associada às novas configurações, às atualizações da política ou à variabilidade do treinamento. Investigue os dados antes de concluir que a clonagem ou determinado parâmetro foi responsável pelo resultado.</p>
+<p>Referência: <a href="https://docs.aws.amazon.com/solutions/latest/deepracer-on-aws/create-a-model.html">Criação de modelos no DeepRacer on AWS</a>.</p>
+<h2 id="algoritmos-de-aprendizado-ppo-vs-sac">Algoritmos de Aprendizado: PPO vs. SAC<a class="headerlink" href="#algoritmos-de-aprendizado-ppo-vs-sac" title="Permanent link">&para;</a></h2>
+<p>A escolha do algoritmo influencia a maneira como as experiências são utilizadas durante o treinamento.</p>
+<p>No DeepRacer on AWS, os algoritmos PPO e SAC possuem características diferentes. Compreender essas diferenças ajuda a selecionar experimentos adequados ao espaço de ação e aos objetivos do projeto.</p>
+<h3 id="a-diferenca-central-on-policy-vs-off-policy">A diferença central: On-Policy vs. Off-Policy<a class="headerlink" href="#a-diferenca-central-on-policy-vs-off-policy" title="Permanent link">&para;</a></h3>
+<p><strong>PPO (<em>Proximal Policy Optimization</em>) — On-Policy</strong></p>
+<p>O PPO utiliza experiências coletadas pela política atual para orientar suas atualizações. Em linhas gerais, o agente coleta experiências, utiliza esses dados para atualizar a política e, depois, coleta novas experiências com a política atualizada.</p>
+<p>Essa abordagem tende a exigir a coleta contínua de novos dados. O PPO também utiliza um mecanismo de otimização que procura limitar alterações excessivas na política durante as atualizações.</p>
+<p><strong>SAC (<em>Soft Actor-Critic</em>) — Off-Policy</strong></p>
+<p>O SAC pode reutilizar experiências coletadas por políticas anteriores. Os dados são armazenados em um <em>replay buffer</em>, que permite utilizá-los em múltiplas atualizações.</p>
+<p>O algoritmo também incorpora a entropia ao objetivo de otimização, incentivando a exploração de diferentes ações.</p>
+<p>A reutilização de experiências pode aumentar a eficiência na utilização dos dados, mas não garante melhor desempenho ou menor tempo de treinamento em qualquer problema.</p>
+<h3 id="quando-usar-ppo-proximal-policy-optimization">Quando usar PPO (Proximal Policy Optimization)<a class="headerlink" href="#quando-usar-ppo-proximal-policy-optimization" title="Permanent link">&para;</a></h3>
+<p>O PPO é um ponto de partida conveniente para diversos experimentos de DeepRacer, especialmente quando o objetivo é compreender os fundamentos do treinamento e estabelecer uma referência de desempenho.</p>
+<h4 id="para-iniciantes">Para iniciantes<a class="headerlink" href="#para-iniciantes" title="Permanent link">&para;</a></h4>
+<p>O PPO é útil para estudar a relação entre função de recompensa, espaço de ação e comportamento do agente.</p>
+<p>Uma configuração inicial simples facilita a interpretação dos resultados, desde que as demais variáveis do experimento sejam mantidas sob controle.</p>
+<h4 id="espaco-de-acao-discreto">Espaço de ação discreto<a class="headerlink" href="#espaco-de-acao-discreto" title="Permanent link">&para;</a></h4>
+<p>Na solução oficial DeepRacer on AWS, o PPO é compatível com espaços de ação discretos e contínuos.</p>
+<p>Em um espaço discreto, o agente escolhe entre combinações previamente definidas de velocidade e direção. Isso facilita controlar quais ações estão disponíveis para o modelo e investigar como essas escolhas influenciam seu comportamento.</p>
+<h4 id="foco-em-estabelecer-uma-referencia">Foco em estabelecer uma referência<a class="headerlink" href="#foco-em-estabelecer-uma-referencia" title="Permanent link">&para;</a></h4>
+<p>O PPO pode servir como modelo de referência para comparar configurações de recompensa, sensores e hiperparâmetros.</p>
+<p>Entretanto, utilizar PPO não garante estabilidade. O comportamento depende da configuração e do problema, e o algoritmo também pode apresentar oscilações ou dificuldades de convergência.</p>
+<h3 id="quando-usar-sac-soft-actor-critic">Quando usar SAC (Soft Actor-Critic)<a class="headerlink" href="#quando-usar-sac-soft-actor-critic" title="Permanent link">&para;</a></h3>
+<p>O SAC é uma alternativa relevante quando o experimento utiliza espaço de ação contínuo e há interesse em investigar os efeitos da reutilização de experiências e do incentivo à exploração.</p>
+<h4 id="espaco-de-acao-continuo">Espaço de ação contínuo<a class="headerlink" href="#espaco-de-acao-continuo" title="Permanent link">&para;</a></h4>
+<p>Na solução oficial DeepRacer on AWS, o SAC utiliza espaço de ação contínuo.</p>
+<p>Isso permite ao agente selecionar valores de direção e velocidade dentro dos intervalos definidos para o modelo.</p>
+<p>A compatibilidade deve ser confirmada na documentação da implementação utilizada antes de reproduzir o experimento.</p>
+<h4 id="reutilizacao-de-experiencias">Reutilização de experiências<a class="headerlink" href="#reutilizacao-de-experiencias" title="Permanent link">&para;</a></h4>
+<p>O SAC mantém um <em>replay buffer</em> que permite reutilizar experiências coletadas anteriormente.</p>
+<p>Esse mecanismo pode melhorar o aproveitamento dos dados, mas seu benefício depende da qualidade e da relevância das experiências armazenadas, além das demais características do treinamento.</p>
+<h4 id="exploracao-e-prevencao-de-estagnacao">Exploração e prevenção de estagnação<a class="headerlink" href="#exploracao-e-prevencao-de-estagnacao" title="Permanent link">&para;</a></h4>
+<p>O objetivo relacionado à entropia incentiva a exploração de diferentes ações. Esse mecanismo pode ajudar o agente a investigar estratégias que ainda não foram suficientemente exploradas.</p>
+<p>Entretanto, o SAC não garante superar um modelo estagnado ou aprender mais rapidamente em todos os ambientes. Se um modelo PPO deixar de melhorar, avalie primeiro a função de recompensa, os logs, o espaço de ação e as condições do treinamento antes de atribuir o problema à escolha do algoritmo.</p>
+<h3 id="como-decidir-entre-ppo-e-sac">Como decidir entre PPO e SAC<a class="headerlink" href="#como-decidir-entre-ppo-e-sac" title="Permanent link">&para;</a></h3>
+<p>Não existe um algoritmo universalmente superior para todas as tarefas do DeepRacer.</p>
+<p>A escolha deve considerar, principalmente:</p>
+<ul>
+<li><strong>Compatibilidade:</strong> verifique se o algoritmo suporta o espaço de ação e as configurações desejadas.</li>
+<li><strong>Objetivo do experimento:</strong> considere se o foco é estabelecer um modelo de referência, investigar a exploração ou comparar estratégias de controle.</li>
+<li><strong>Recursos disponíveis:</strong> avalie o custo computacional e o tempo necessário para coletar experiências e treinar os modelos.</li>
+<li><strong>Evidências obtidas:</strong> compare os resultados dos modelos em condições equivalentes, em vez de assumir que um algoritmo será melhor por suas características teóricas.</li>
+</ul>
+<p>Para comparar PPO e SAC, mantenha critérios de avaliação consistentes e registre a configuração utilizada por cada modelo. Sempre que possível, repita as avaliações para identificar se a diferença observada é persistente ou se pode decorrer da variabilidade do treinamento.</p>
+<p>Na solução oficial DeepRacer on AWS, a compatibilidade documentada é:</p>
+<table>
+<thead>
+<tr>
+<th>Algoritmo</th>
+<th>Espaço de ação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PPO</td>
+<td>Discreto e contínuo</td>
+</tr>
+<tr>
+<td>SAC</td>
+<td>Contínuo</td>
+</tr>
+</tbody>
+</table>
+<p>Consulte a documentação oficial para verificar as configurações e os recursos disponíveis:</p>
+<ul>
+<li><a href="https://docs.aws.amazon.com/solutions/latest/deepracer-on-aws/training-algorithms.html">Algoritmos de treinamento</a></li>
+<li><a href="https://docs.aws.amazon.com/solutions/latest/deepracer-on-aws/action-space-reward-function.html">Espaço de ação e função de recompensa</a></li>
+<li><a href="https://docs.aws.amazon.com/solutions/latest/deepracer-on-aws/train-and-evaluate-models.html">Treinamento e avaliação de modelos</a></li>
+</ul>
+<h2 id="estrategia-de-experimentacao-e-avaliacao">Estratégia de experimentação e avaliação<a class="headerlink" href="#estrategia-de-experimentacao-e-avaliacao" title="Permanent link">&para;</a></h2>
+<p>As dicas anteriores fornecem princípios para formular funções de recompensa e ajustar o treinamento. Para que essas decisões produzam conclusões confiáveis, é importante adotar uma abordagem sistemática de experimentação.</p>
+<h3 id="1-estabeleca-um-modelo-de-referencia">1. Estabeleça um modelo de referência<a class="headerlink" href="#1-estabeleca-um-modelo-de-referencia" title="Permanent link">&para;</a></h3>
+<p>Comece com uma configuração simples e registre seus principais parâmetros, incluindo função de recompensa, algoritmo, espaço de ação e hiperparâmetros.</p>
+<p>Avalie o modelo para estabelecer uma referência de desempenho. Sem uma referência, fica difícil determinar se uma alteração realmente produziu melhoria.</p>
+<h3 id="2-modifique-uma-variavel-por-vez">2. Modifique uma variável por vez<a class="headerlink" href="#2-modifique-uma-variavel-por-vez" title="Permanent link">&para;</a></h3>
+<p>Sempre que possível, altere apenas um componente relevante por experimento.</p>
+<p>Por exemplo, primeiro investigue uma alteração na função de recompensa. Em outro experimento, mantenha essa função e avalie uma modificação no espaço de ação.</p>
+<p>Essa abordagem facilita identificar relações entre as alterações realizadas e os resultados observados.</p>
+<h3 id="3-avalie-mais-do-que-a-recompensa-acumulada">3. Avalie mais do que a recompensa acumulada<a class="headerlink" href="#3-avalie-mais-do-que-a-recompensa-acumulada" title="Permanent link">&para;</a></h3>
+<p>Uma recompensa elevada não garante que o modelo esteja cumprindo o objetivo prático.</p>
+<p>Dependendo da modalidade, considere métricas como:</p>
+<ul>
+<li>Percentual de conclusão da pista.</li>
+<li>Tempo de volta.</li>
+<li>Frequência de saídas da pista ou colisões.</li>
+<li>Consistência do desempenho entre diferentes tentativas.</li>
+<li>Comportamento observado nas situações em que o modelo apresenta dificuldades.</li>
+</ul>
+<p>A métrica prioritária depende do objetivo do experimento. Um modelo voltado inicialmente à conclusão da pista deve ser avaliado de maneira diferente de outro cujo objetivo principal seja reduzir o tempo de volta.</p>
+<h3 id="4-utilize-os-logs-para-investigar-o-comportamento">4. Utilize os logs para investigar o comportamento<a class="headerlink" href="#4-utilize-os-logs-para-investigar-o-comportamento" title="Permanent link">&para;</a></h3>
+<p>Os logs e os gráficos ajudam a formular hipóteses sobre os resultados do treinamento.</p>
+<p>Quando o modelo apresenta uma regressão, procure identificar em quais situações seu comportamento se deteriora e se essa mudança coincide com alguma alteração na função de recompensa ou na configuração do modelo.</p>
+<p>A análise de logs deve orientar os próximos experimentos, em vez de ser utilizada apenas depois que todos os ajustes foram concluídos.</p>
+<p>Consulte o módulo <a href="../analise-de-logs/">Análise de Logs e Gráficos</a> para conhecer as ferramentas de investigação disponíveis.</p>
+<h3 id="5-documente-os-resultados">5. Documente os resultados<a class="headerlink" href="#5-documente-os-resultados" title="Permanent link">&para;</a></h3>
+<p>Registre as configurações utilizadas, as alterações realizadas, as condições de avaliação e os resultados obtidos.</p>
+<p>Quando possível, registre também as hipóteses formuladas antes de cada experimento e as conclusões alcançadas depois da avaliação.</p>
+<p>Essa documentação torna o processo mais reproduzível e ajuda a evitar que uma melhoria pontual seja interpretada como uma regra universal.</p>
+<h2 id="proxima-etapa">Próxima etapa<a class="headerlink" href="#proxima-etapa" title="Permanent link">&para;</a></h2>
+<p><a href="../analise-de-logs/">Análise de Logs e Gráficos</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Rodapé" >
+        
+          
+          <a href="../fundamentos-rl/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: 2. Fundamentos de RL">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              <div class="md-ellipsis">
+                2. Fundamentos de RL
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../analise-de-logs/" class="md-footer__link md-footer__link--next" aria-label="Próximo: 4. Análise de Logs">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Próximo
+              </span>
+              <div class="md-ellipsis">
+                4. Análise de Logs
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

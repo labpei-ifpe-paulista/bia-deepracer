@@ -1,0 +1,1221 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Guia prático de Aprendizagem por Reforço utilizando o AWS DeepRacer.">
+      
+      
+        <meta name="author" content="Ruan Andrew">
+      
+      
+        <link rel="canonical" href="https://labpei-ifpe-paulista.github.io/bia-deepracer/introducao/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../fundamentos-rl/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>1. Introdução - Da Teoria à Pista</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#guia-deepracer-introducao" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="Da Teoria à Pista" class="md-header__button md-logo" aria-label="Da Teoria à Pista" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Da Teoria à Pista
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              1. Introdução
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Mudar para modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Mudar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/labpei-ifpe-paulista/bia-deepracer" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    labpei-ifpe-paulista/bia-deepracer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  O Guia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Da Teoria à Pista" class="md-nav__button md-logo" aria-label="Da Teoria à Pista" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Da Teoria à Pista
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/labpei-ifpe-paulista/bia-deepracer" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    labpei-ifpe-paulista/bia-deepracer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    O Guia
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    O Guia
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introdução
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introdução
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-e-aprendizagem-por-reforco-rl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que é Aprendizagem por Reforço (RL)?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="O que é Aprendizagem por Reforço (RL)?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recompensa-e-aprendizado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recompensa e Aprendizado
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-e-o-aws-deepracer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que é o AWS DeepRacer?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-estado-atual-do-deepracer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O estado atual do DeepRacer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="O estado atual do DeepRacer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consideracoes-de-custos-ao-executar-na-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Considerações de custos ao executar na AWS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#como-acessar-o-deepracer-atualmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como acessar o DeepRacer atualmente
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Como acessar o DeepRacer atualmente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#forma-oficial-deepracer-on-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forma oficial: DeepRacer on AWS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alternativa-da-comunidade-deepracer-for-cloud-drfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alternativa da comunidade: DeepRacer for Cloud (DRFC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alternativa-da-comunidade-deepracer-on-the-spot-dots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alternativa da comunidade: DeepRacer on the Spot (DOTS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#por-que-usar-o-deepracer-para-aprender" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que usar o DeepRacer para aprender?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Por que usar o DeepRacer para aprender?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#foco-na-funcao-de-recompensa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foco na função de recompensa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feedback-visual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feedback visual
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experimentacao-controlada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Experimentação controlada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relacao-entre-computacao-em-nuvem-e-aprendizado-de-maquina" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relação entre computação em nuvem e aprendizado de máquina
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proxima-etapa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Próxima etapa
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos-rl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Fundamentos de RL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../otimizacao-e-estrategia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Otimização e Estratégia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analise-de-logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Análise de Logs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../desafios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Desafios Práticos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-e-aprendizagem-por-reforco-rl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que é Aprendizagem por Reforço (RL)?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="O que é Aprendizagem por Reforço (RL)?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recompensa-e-aprendizado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recompensa e Aprendizado
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-e-o-aws-deepracer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que é o AWS DeepRacer?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-estado-atual-do-deepracer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O estado atual do DeepRacer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="O estado atual do DeepRacer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consideracoes-de-custos-ao-executar-na-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Considerações de custos ao executar na AWS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#como-acessar-o-deepracer-atualmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como acessar o DeepRacer atualmente
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Como acessar o DeepRacer atualmente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#forma-oficial-deepracer-on-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forma oficial: DeepRacer on AWS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alternativa-da-comunidade-deepracer-for-cloud-drfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alternativa da comunidade: DeepRacer for Cloud (DRFC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alternativa-da-comunidade-deepracer-on-the-spot-dots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alternativa da comunidade: DeepRacer on the Spot (DOTS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#por-que-usar-o-deepracer-para-aprender" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que usar o DeepRacer para aprender?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Por que usar o DeepRacer para aprender?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#foco-na-funcao-de-recompensa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foco na função de recompensa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feedback-visual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feedback visual
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experimentacao-controlada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Experimentação controlada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relacao-entre-computacao-em-nuvem-e-aprendizado-de-maquina" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relação entre computação em nuvem e aprendizado de máquina
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proxima-etapa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Próxima etapa
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="guia-deepracer-introducao">Guia DeepRacer: Introdução<a class="headerlink" href="#guia-deepracer-introducao" title="Permanent link">&para;</a></h1>
+<p>Este guia apresenta o AWS DeepRacer como uma ferramenta facilitadora para o aprendizado por reforço (Reinforcement Learning — RL). O objetivo é conectar os conceitos teóricos de Inteligência Artificial à experimentação prática, permitindo compreender como um agente aprende a tomar decisões em um ambiente simulado.</p>
+<p>O conteúdo está estruturado em cinco módulos progressivos:</p>
+<p><strong>Introdução ao DeepRacer</strong>: Apresenta o aprendizado por reforço, a plataforma DeepRacer, suas aplicações educacionais e as alternativas disponíveis para executar o ambiente atualmente.</p>
+<p><strong>Conceitos Fundamentais de Aprendizagem por Reforço</strong>: Explora os fundamentos de RL e sua aplicação ao controle de veículos autônomos, incluindo estados, observações, ações, recompensas e políticas.</p>
+<p><strong>Otimização e Estratégias</strong>: Aborda a construção de funções de recompensa, a configuração de hiperparâmetros e as diferenças entre os algoritmos de aprendizado utilizados no DeepRacer.</p>
+<p><strong>Análise de Logs e Gráficos</strong>: Apresenta ferramentas que permitem investigar o comportamento dos modelos, interpretar resultados de treinamento e identificar oportunidades de melhoria.</p>
+<p><strong>Desafios Práticos</strong>: Propõe exercícios progressivos para aplicar os conceitos estudados, desenvolver modelos e analisar seu desempenho.</p>
+<h2 id="o-que-e-aprendizagem-por-reforco-rl">O que é Aprendizagem por Reforço (RL)?<a class="headerlink" href="#o-que-e-aprendizagem-por-reforco-rl" title="Permanent link">&para;</a></h2>
+<p>Dentro da Inteligência Artificial, o Aprendizado de Máquina (Machine Learning — ML) reúne técnicas que permitem a sistemas computacionais identificar padrões e melhorar seu desempenho a partir de dados e experiências.</p>
+<p>Uma dessas técnicas é a Aprendizagem por Reforço, na qual um agente aprende a tomar decisões por meio da interação com um ambiente. Em vez de receber instruções explícitas para cada situação, ele experimenta ações e utiliza as recompensas recebidas para aprender comportamentos que favoreçam seus objetivos.</p>
+<p>O funcionamento básico ocorre por meio de um ciclo:</p>
+<ol>
+<li>O agente recebe uma observação do ambiente, como uma imagem da pista capturada por uma câmera.</li>
+<li>Com base nas informações disponíveis, o agente seleciona e executa uma ação, como acelerar ou alterar a direção.</li>
+<li>O ambiente reage à ação e produz uma nova situação.</li>
+<li>Uma função de recompensa atribui um valor numérico ao comportamento observado.</li>
+<li>O algoritmo utiliza as experiências acumuladas durante o treinamento para atualizar a política do agente.</li>
+</ol>
+<p>Esse processo se repete ao longo do treinamento. Com o tempo, o agente pode aprender estratégias que aumentem a recompensa cumulativa esperada, considerando não apenas os resultados imediatos, mas também as consequências de suas decisões futuras.</p>
+<h3 id="recompensa-e-aprendizado">Recompensa e Aprendizado<a class="headerlink" href="#recompensa-e-aprendizado" title="Permanent link">&para;</a></h3>
+<p>A recompensa é um sinal numérico utilizado para orientar o aprendizado. Seu valor é definido pela função de recompensa, um trecho de código escrito em Python no DeepRacer.</p>
+<p>Essa função traduz o objetivo desejado em critérios que o algoritmo consegue utilizar durante o treinamento. Por exemplo, um modelo pode receber recompensas por permanecer na pista e progredir ao longo do percurso, enquanto comportamentos indesejados podem receber valores menores.</p>
+<div class="admonition info">
+<p class="admonition-title">Nota conceitual</p>
+<p>É importante compreender que a recompensa não representa necessariamente uma medida direta da qualidade real do comportamento. O agente aprende a maximizar o objetivo matemático definido pela função. Se os incentivos forem inadequados, ele poderá encontrar estratégias que aumentem a recompensa sem produzir o resultado esperado.</p>
+</div>
+<p>Por isso, desenvolver um bom modelo exige não apenas escrever uma função de recompensa, mas também observar o comportamento resultante e avaliar se ele corresponde ao objetivo pretendido.</p>
+<h2 id="o-que-e-o-aws-deepracer">O que é o AWS DeepRacer?<a class="headerlink" href="#o-que-e-o-aws-deepracer" title="Permanent link">&para;</a></h2>
+<p>O AWS DeepRacer é uma plataforma educacional desenvolvida pela Amazon Web Services (AWS) para facilitar o aprendizado de Aprendizagem por Reforço por meio de corridas de veículos autônomos.</p>
+<p>A plataforma foi concebida em torno de um veículo de corrida em escala 1:18 e de um simulador 3D que permite treinar modelos de RL em pistas virtuais. O agente aprende a controlar o veículo de acordo com uma política desenvolvida durante o treinamento.</p>
+<p>A simulação permite experimentar diferentes funções de recompensa, configurações de ação e hiperparâmetros sem depender da disponibilidade de um carro físico para cada treinamento.</p>
+<p><img alt="Imagem do AWS DeepRacer" src="../imagens/Carro_fisico.jpg" /></p>
+<p><img alt="Simulador 3D do AWS DeepRacer" src="../imagens/Simulador.png" /></p>
+<p>O DeepRacer torna conceitos abstratos mais concretos. Em vez de analisar apenas números e equações, o estudante pode observar o veículo saindo da pista, fazendo curvas de maneira inadequada ou apresentando comportamentos diferentes após alterações no modelo.</p>
+<p>Essa relação entre código, treinamento e comportamento observado oferece um contexto prático para compreender como as decisões de modelagem influenciam os resultados de um agente de Aprendizagem por Reforço.</p>
+<h2 id="o-estado-atual-do-deepracer">O estado atual do DeepRacer<a class="headerlink" href="#o-estado-atual-do-deepracer" title="Permanent link">&para;</a></h2>
+<p>Em 15 de dezembro de 2025, o AWS DeepRacer como serviço deixou de estar disponível no console tradicional da AWS. A plataforma passou a ter como alternativa oficial o <strong>DeepRacer on AWS</strong>, uma solução de código aberto que pode ser implantada e operada na própria conta AWS do usuário.</p>
+<p>A mudança alterou a maneira de acessar e administrar o ambiente. No modelo anterior, grande parte da infraestrutura era gerenciada pela AWS como parte do serviço. Na solução atual, o usuário precisa implantar a arquitetura, configurar os acessos e acompanhar os recursos e custos associados à execução.</p>
+<p>Isso não significa que todos os componentes da infraestrutura precisem ser administrados manualmente. A solução utiliza serviços gerenciados da AWS, mas sua implantação e operação exigem mais responsabilidade do usuário.</p>
+<p>O projeto oficial mantém recursos para treinamento e avaliação de modelos, simulação e organização de corridas. Entretanto, os recursos disponíveis, os procedimentos de configuração e as modalidades de corrida devem ser conferidos na documentação correspondente à solução e à versão utilizada.</p>
+<p>A disponibilidade comercial de veículos físicos também mudou: a AWS informou que os dispositivos DeepRacer deixariam de ser vendidos em Amazon.com a partir da mesma data. Portanto, este guia prioriza a utilização do ambiente simulado, que não depende da aquisição de um veículo físico.</p>
+<p>Documentação oficial: <a href="https://docs.aws.amazon.com/solutions/latest/deepracer-on-aws/">DeepRacer on AWS</a>.</p>
+<h3 id="consideracoes-de-custos-ao-executar-na-aws">Considerações de custos ao executar na AWS<a class="headerlink" href="#consideracoes-de-custos-ao-executar-na-aws" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Atenção aos Custos na AWS</p>
+<p>Ao utilizar a solução oficial, os recursos são provisionados na sua própria conta AWS. Dependendo da configuração, podem existir custos relacionados a serviços como Amazon SageMaker, Amazon S3 e outros componentes utilizados pela arquitetura.</p>
+</div>
+<p>O custo final depende dos recursos provisionados, da região selecionada, do tempo de utilização e das configurações adotadas. Por isso, não é adequado presumir que a execução será gratuita ou que terá o mesmo custo para todos os usuários.</p>
+<p>Antes da implantação:</p>
+<ul>
+<li>Consulte os requisitos e os custos dos recursos utilizados.</li>
+<li>Verifique as permissões necessárias para criar e administrar a infraestrutura.</li>
+<li>Acompanhe o uso dos serviços durante os experimentos.</li>
+<li>Ao concluir os testes, interrompa ou remova os recursos que não serão mais utilizados, seguindo os procedimentos oficiais de limpeza da implantação.</li>
+</ul>
+<p>Esses cuidados são especialmente importantes em ambientes acadêmicos com limites de orçamento, permissões restritas ou cotas de utilização.</p>
+<h3 id="como-acessar-o-deepracer-atualmente">Como acessar o DeepRacer atualmente<a class="headerlink" href="#como-acessar-o-deepracer-atualmente" title="Permanent link">&para;</a></h3>
+<p>Existem diferentes alternativas para utilizar o DeepRacer. A escolha depende dos recursos disponíveis, da familiaridade com infraestrutura e das condições de execução do treinamento.</p>
+<hr />
+<h4 id="forma-oficial-deepracer-on-aws">Forma oficial: DeepRacer on AWS<a class="headerlink" href="#forma-oficial-deepracer-on-aws" title="Permanent link">&para;</a></h4>
+<p><strong><a href="https://docs.aws.amazon.com/solutions/deepracer-on-aws/">AWS Solutions — DeepRacer on AWS</a></strong></p>
+<p>A solução oficial permite implantar a arquitetura do DeepRacer na própria conta AWS utilizando os recursos e procedimentos documentados pela AWS.</p>
+<p>Essa alternativa oferece uma experiência integrada de treinamento e avaliação, mas exige uma conta AWS, permissões compatíveis com a implantação e atenção aos custos dos serviços provisionados.</p>
+<p>A implantação não deve ser considerada automaticamente compatível com ambientes acadêmicos restritos. Antes de iniciar, verifique se a conta disponível permite criar os recursos exigidos pela solução.</p>
+<hr />
+<h4 id="alternativa-da-comunidade-deepracer-for-cloud-drfc">Alternativa da comunidade: DeepRacer for Cloud (DRFC)<a class="headerlink" href="#alternativa-da-comunidade-deepracer-for-cloud-drfc" title="Permanent link">&para;</a></h4>
+<p><strong><a href="https://github.com/aws-deepracer-community/deepracer-for-cloud">Repositório do DeepRacer for Cloud</a></strong></p>
+<p>O DeepRacer for Cloud é um projeto comunitário que disponibiliza um ambiente de treinamento baseado em contêineres Docker. Ele pode ser executado localmente ou em infraestrutura de nuvem compatível, conforme os requisitos da versão utilizada.</p>
+<p>O treinamento local pode reduzir a dependência de recursos computacionais pagos na AWS, mas exige hardware adequado, configuração do ambiente e instalação das dependências necessárias.</p>
+<p>A execução em nuvem permite utilizar recursos computacionais sob demanda, porém continua sujeita aos custos de infraestrutura e à disponibilidade das instâncias selecionadas.</p>
+<hr />
+<h4 id="alternativa-da-comunidade-deepracer-on-the-spot-dots">Alternativa da comunidade: DeepRacer on the Spot (DOTS)<a class="headerlink" href="#alternativa-da-comunidade-deepracer-on-the-spot-dots" title="Permanent link">&para;</a></h4>
+<p><strong><a href="https://github.com/aws-deepracer-community/deepracer-on-the-spot">Repositório do DeepRacer on the Spot</a></strong></p>
+<p>O DeepRacer on the Spot é um projeto comunitário voltado à automação do treinamento utilizando o DeepRacer for Cloud e recursos de computação em nuvem, incluindo instâncias EC2 Spot.</p>
+<p>As instâncias Spot podem oferecer custos inferiores aos de instâncias sob demanda, mas sua disponibilidade pode ser interrompida pela AWS. A economia efetiva depende da configuração, do tempo de execução, da disponibilidade dos recursos e dos demais serviços utilizados.</p>
+<p>Antes de adotar essa alternativa, consulte a documentação do projeto para verificar os requisitos, o estado de manutenção e a compatibilidade com seu ambiente.</p>
+<div class="admonition warning">
+<p class="admonition-title">Atenção aos requisitos do ambiente</p>
+<p>as alternativas descritas não são necessariamente intercambiáveis em todos os aspectos. Diferenças de configuração, implementação e versão podem afetar os algoritmos disponíveis, as modalidades de corrida, o acesso aos modelos e os procedimentos de análise.</p>
+</div>
+<h2 id="por-que-usar-o-deepracer-para-aprender">Por que usar o DeepRacer para aprender?<a class="headerlink" href="#por-que-usar-o-deepracer-para-aprender" title="Permanent link">&para;</a></h2>
+<h3 id="foco-na-funcao-de-recompensa">Foco na função de recompensa<a class="headerlink" href="#foco-na-funcao-de-recompensa" title="Permanent link">&para;</a></h3>
+<p>O DeepRacer fornece um ambiente especializado para experimentar conceitos de Aprendizagem por Reforço sem exigir que o estudante desenvolva do zero todo o simulador, o sistema de treinamento e a infraestrutura de controle do veículo.</p>
+<p>Isso permite concentrar parte significativa dos estudos na função de recompensa e na observação do comportamento do agente.</p>
+<p>Ao modificar os incentivos e avaliar o comportamento resultante, o estudante pode investigar como a definição de um objetivo influencia o aprendizado. O exercício também demonstra os limites dessa abordagem: uma função de recompensa mal definida pode incentivar comportamentos inesperados, mesmo quando o algoritmo está funcionando conforme projetado.</p>
+<h3 id="feedback-visual">Feedback visual<a class="headerlink" href="#feedback-visual" title="Permanent link">&para;</a></h3>
+<p>Interpretar apenas métricas numéricas pode ser difícil para quem está começando. O simulador 3D oferece uma representação visual do comportamento aprendido.</p>
+<p>Se o modelo apresentar dificuldades em curvas, sair da pista ou executar movimentos instáveis, esses comportamentos podem ser observados durante a avaliação e investigados por meio dos dados de treinamento.</p>
+<p>O feedback visual facilita a formulação de hipóteses sobre o desempenho do modelo, mas não substitui a análise quantitativa. Uma volta aparentemente boa não garante que o agente seja consistente, rápido ou capaz de lidar com outras condições.</p>
+<h3 id="experimentacao-controlada">Experimentação controlada<a class="headerlink" href="#experimentacao-controlada" title="Permanent link">&para;</a></h3>
+<p>O ambiente permite modificar configurações e comparar modelos treinados sob condições definidas.</p>
+<p>Por exemplo, é possível investigar como diferentes funções de recompensa afetam a capacidade de completar uma pista ou como alterações no espaço de ação influenciam a trajetória do veículo.</p>
+<div class="admonition tip">
+<p class="admonition-title">Dica de experimentação</p>
+<p>Para que essas comparações tenham valor, é importante registrar as configurações utilizadas, observar os critérios de avaliação e evitar atribuir uma melhoria a determinada alteração sem considerar outras diferenças entre os experimentos.</p>
+</div>
+<h3 id="relacao-entre-computacao-em-nuvem-e-aprendizado-de-maquina">Relação entre computação em nuvem e aprendizado de máquina<a class="headerlink" href="#relacao-entre-computacao-em-nuvem-e-aprendizado-de-maquina" title="Permanent link">&para;</a></h3>
+<p>O DeepRacer também oferece uma oportunidade de conhecer ferramentas e conceitos de computação em nuvem relacionados ao treinamento de modelos.</p>
+<p>Na solução oficial, o treinamento utiliza serviços como Amazon SageMaker, enquanto o armazenamento de dados e artefatos pode envolver Amazon S3. A infraestrutura necessária depende da alternativa de execução escolhida.</p>
+<p>A nuvem pode facilitar o acesso a recursos computacionais, mas não elimina a necessidade de compreender permissões, limites de utilização, custos e requisitos operacionais.</p>
+<h2 id="proxima-etapa">Próxima etapa<a class="headerlink" href="#proxima-etapa" title="Permanent link">&para;</a></h2>
+<p><a href="../fundamentos-rl/">Fundamentos de Aprendizagem por Reforço</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Rodapé" >
+        
+          
+          <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Anterior: Início">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              <div class="md-ellipsis">
+                Início
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../fundamentos-rl/" class="md-footer__link md-footer__link--next" aria-label="Próximo: 2. Fundamentos de RL">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Próximo
+              </span>
+              <div class="md-ellipsis">
+                2. Fundamentos de RL
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1526 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Guia prático de Aprendizagem por Reforço utilizando o AWS DeepRacer.">
+      
+      
+        <meta name="author" content="Ruan Andrew">
+      
+      
+        <link rel="canonical" href="https://labpei-ifpe-paulista.github.io/bia-deepracer/analise-de-logs/">
+      
+      
+        <link rel="prev" href="../otimizacao-e-estrategia/">
+      
+      
+        <link rel="next" href="../desafios/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>4. Análise de Logs - Da Teoria à Pista</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#analise-de-logs-e-graficos" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="Da Teoria à Pista" class="md-header__button md-logo" aria-label="Da Teoria à Pista" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Da Teoria à Pista
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              4. Análise de Logs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Mudar para modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Mudar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/labpei-ifpe-paulista/bia-deepracer" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    labpei-ifpe-paulista/bia-deepracer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../introducao/" class="md-tabs__link">
+          
+  
+  
+  O Guia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Da Teoria à Pista" class="md-nav__button md-logo" aria-label="Da Teoria à Pista" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Da Teoria à Pista
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/labpei-ifpe-paulista/bia-deepracer" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    labpei-ifpe-paulista/bia-deepracer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    O Guia
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    O Guia
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../introducao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introdução
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fundamentos-rl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Fundamentos de RL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../otimizacao-e-estrategia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Otimização e Estratégia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Análise de Logs
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Análise de Logs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#por-que-analisar-os-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que analisar os logs?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conhecendo-a-ferramenta-deepracer-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conhecendo a ferramenta DeepRacer Analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obtendo-os-logs-de-treinamento-e-avaliacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Obtendo os logs de treinamento e avaliação
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Obtendo os logs de treinamento e avaliação">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opcao-1-deepracer-on-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opção 1: DeepRacer on AWS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Opção 1: DeepRacer on AWS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logs-de-treinamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logs de treinamento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logs-de-avaliacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logs de avaliação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#organizacao-dos-arquivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Organização dos arquivos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opcao-2-deepracer-for-cloud-drfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opção 2: DeepRacer for Cloud (DRFC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#como-configurar-e-executar-a-ferramenta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como configurar e executar a ferramenta
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Como configurar e executar a ferramenta">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opcao-1-execucao-local-com-python-e-jupyterlab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opção 1: Execução local com Python e JupyterLab
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Opção 1: Execução local com Python e JupyterLab">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-requisitos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-a-passo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo a passo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opcao-2-execucao-em-um-ambiente-jupyter-hospedado-na-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opção 2: Execução em um ambiente Jupyter hospedado na AWS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#como-interpretar-os-resultados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como interpretar os resultados
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Como interpretar os resultados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-evolucao-da-recompensa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Evolução da recompensa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-trajetoria-do-veiculo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Trajetória do veículo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-velocidade-e-controle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Velocidade e controle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-consistencia-do-desempenho" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Consistência do desempenho
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-estagnacao-ou-oscilacao-do-treinamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Estagnação ou oscilação do treinamento
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrategia-pratica-de-diagnostico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia prática de diagnóstico
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cuidados-e-limitacoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cuidados e limitações
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencias-oficiais-e-recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referências oficiais e recursos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proxima-etapa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Próxima etapa
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../desafios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Desafios Práticos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#por-que-analisar-os-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que analisar os logs?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conhecendo-a-ferramenta-deepracer-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conhecendo a ferramenta DeepRacer Analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obtendo-os-logs-de-treinamento-e-avaliacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Obtendo os logs de treinamento e avaliação
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Obtendo os logs de treinamento e avaliação">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opcao-1-deepracer-on-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opção 1: DeepRacer on AWS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Opção 1: DeepRacer on AWS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logs-de-treinamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logs de treinamento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logs-de-avaliacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logs de avaliação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#organizacao-dos-arquivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Organização dos arquivos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opcao-2-deepracer-for-cloud-drfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opção 2: DeepRacer for Cloud (DRFC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#como-configurar-e-executar-a-ferramenta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como configurar e executar a ferramenta
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Como configurar e executar a ferramenta">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opcao-1-execucao-local-com-python-e-jupyterlab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opção 1: Execução local com Python e JupyterLab
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Opção 1: Execução local com Python e JupyterLab">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-requisitos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-a-passo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo a passo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opcao-2-execucao-em-um-ambiente-jupyter-hospedado-na-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opção 2: Execução em um ambiente Jupyter hospedado na AWS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#como-interpretar-os-resultados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como interpretar os resultados
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Como interpretar os resultados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-evolucao-da-recompensa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Evolução da recompensa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-trajetoria-do-veiculo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Trajetória do veículo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-velocidade-e-controle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Velocidade e controle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-consistencia-do-desempenho" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Consistência do desempenho
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-estagnacao-ou-oscilacao-do-treinamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Estagnação ou oscilação do treinamento
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrategia-pratica-de-diagnostico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia prática de diagnóstico
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cuidados-e-limitacoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cuidados e limitações
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencias-oficiais-e-recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referências oficiais e recursos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proxima-etapa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Próxima etapa
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="analise-de-logs-e-graficos">Análise de Logs e Gráficos<a class="headerlink" href="#analise-de-logs-e-graficos" title="Permanent link">&para;</a></h1>
+<p>No desenvolvimento de modelos de Aprendizagem por Reforço, chega um momento em que apenas observar o carro andando não é suficiente para entender o que o agente está fazendo de errado. Como vimos no módulo anterior, quando o desempenho do modelo cai ou deixa de melhorar, a solução não deve ser simplesmente alterar hiperparâmetros por tentativa e erro. É importante investigar o comportamento do agente e identificar possíveis causas para os resultados observados.</p>
+<p>Para isso, utilizamos a ferramenta <strong>DeepRacer Analysis</strong>, desenvolvida e mantida pela AWS DeepRacer Community.</p>
+<p>Essa ferramenta reúne Jupyter Notebooks que permitem analisar os registros de treinamento e avaliação do DeepRacer, transformando os dados em representações visuais que facilitam a investigação do desempenho dos modelos.</p>
+<p>Com ela, é possível examinar métricas de treinamento, visualizar trajetórias e investigar aspectos do comportamento do veículo, conforme os dados disponíveis e o notebook utilizado.</p>
+<p><img alt="Análise de logs do DeepRacer" src="../imagens/Log_analysis.jpg" /></p>
+<h2 id="por-que-analisar-os-logs">Por que analisar os logs?<a class="headerlink" href="#por-que-analisar-os-logs" title="Permanent link">&para;</a></h2>
+<p>Durante o treinamento, o agente realiza inúmeras interações com o ambiente. Observar apenas uma execução ou a recompensa acumulada não é suficiente para compreender todas as decisões que levaram ao resultado.</p>
+<p>A análise dos logs ajuda a investigar perguntas como:</p>
+<ul>
+<li>O modelo está melhorando ao longo do treinamento?</li>
+<li>O aumento da recompensa corresponde a uma melhoria real no comportamento do veículo?</li>
+<li>Em quais regiões da pista o agente apresenta mais dificuldades?</li>
+<li>O modelo consegue completar a pista de maneira consistente?</li>
+<li>Uma alteração na função de recompensa produziu o efeito esperado?</li>
+<li>O desempenho observado durante o treinamento se mantém durante a avaliação?</li>
+</ul>
+<p>Essas perguntas orientam a investigação e ajudam a transformar os dados coletados em hipóteses que podem ser testadas em novos experimentos.</p>
+<div class="admonition info">
+<p class="admonition-title">Nota conceitual</p>
+<p>uma correlação entre determinada alteração e uma melhoria observada não comprova, por si só, que essa alteração foi a causa do resultado. O objetivo da análise é reunir evidências que permitam formular hipóteses melhores e conduzir comparações mais controladas.</p>
+</div>
+<h2 id="conhecendo-a-ferramenta-deepracer-analysis">Conhecendo a ferramenta DeepRacer Analysis<a class="headerlink" href="#conhecendo-a-ferramenta-deepracer-analysis" title="Permanent link">&para;</a></h2>
+<p>O projeto está disponível publicamente no GitHub:</p>
+<p><a href="https://github.com/aws-deepracer-community/deepracer-analysis">Repositório da ferramenta DeepRacer Analysis</a></p>
+<p>A ferramenta utiliza Python e Jupyter para processar os dados e gerar análises. O repositório disponibiliza diferentes notebooks, voltados a aspectos específicos do treinamento e da avaliação.</p>
+<p>Entre os principais arquivos estão:</p>
+<ul>
+<li><strong><code>Training_analysis.ipynb</code></strong>: análise dos registros e do desempenho durante o treinamento.</li>
+<li><strong><code>Evaluation_analysis.ipynb</code></strong>: análise dos dados produzidos durante a avaliação dos modelos.</li>
+<li><strong><code>Visual_Analysis.ipynb</code></strong>: recursos para investigação visual do comportamento do agente.</li>
+<li><strong><code>ActionSpace_analysis.ipynb</code></strong>: análise relacionada ao espaço de ação do modelo.</li>
+<li><strong><code>Metrics.ipynb</code></strong>: ferramentas de análise de métricas.</li>
+</ul>
+<p>A disponibilidade e o funcionamento de cada análise dependem dos dados fornecidos, das dependências instaladas e da versão da ferramenta utilizada. Consulte o README do repositório antes de executar os notebooks.</p>
+<h2 id="obtendo-os-logs-de-treinamento-e-avaliacao">Obtendo os logs de treinamento e avaliação<a class="headerlink" href="#obtendo-os-logs-de-treinamento-e-avaliacao" title="Permanent link">&para;</a></h2>
+<p>O AWS DeepRacer passou por uma mudança importante em dezembro de 2025: o serviço gerenciado tradicional deixou de estar disponível no console da AWS, e a solução oficial passou a ser o DeepRacer on AWS, implantado na conta do usuário.</p>
+<p>Por isso, os procedimentos de obtenção dos logs devem corresponder ao ambiente em que o modelo foi treinado.</p>
+<h3 id="opcao-1-deepracer-on-aws">Opção 1: DeepRacer on AWS<a class="headerlink" href="#opcao-1-deepracer-on-aws" title="Permanent link">&para;</a></h3>
+<p>Na solução oficial atual, é possível baixar os logs diretamente pela interface de gerenciamento dos modelos.</p>
+<h4 id="logs-de-treinamento">Logs de treinamento<a class="headerlink" href="#logs-de-treinamento" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Acesse a interface da sua implantação do DeepRacer on AWS.</li>
+<li>Abra os detalhes do modelo que deseja analisar.</li>
+<li>Localize a seção <strong>Training</strong>.</li>
+<li>Clique em <strong>Download logs</strong>.</li>
+<li>Salve os arquivos no computador e extraia o conteúdo, caso tenha sido disponibilizado em um arquivo compactado.</li>
+</ol>
+<h4 id="logs-de-avaliacao">Logs de avaliação<a class="headerlink" href="#logs-de-avaliacao" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Abra os detalhes do modelo correspondente.</li>
+<li>Na seção de avaliações, selecione a avaliação desejada.</li>
+<li>Clique em <strong>Load evaluation</strong>.</li>
+<li>Localize a seção <strong>Evaluation details</strong>.</li>
+<li>Clique em <strong>Download logs</strong> e salve os arquivos.</li>
+</ol>
+<p>Esses procedimentos permitem obter registros de treinamento e avaliação sem depender do console antigo do DeepRacer.</p>
+<p>Documentação oficial: <a href="https://docs.aws.amazon.com/solutions/latest/deepracer-on-aws/troubleshooting-the-solution.html">Troubleshooting the solution — DeepRacer on AWS</a>.</p>
+<h4 id="organizacao-dos-arquivos">Organização dos arquivos<a class="headerlink" href="#organizacao-dos-arquivos" title="Permanent link">&para;</a></h4>
+<p>Antes de executar as análises, mantenha os arquivos de cada experimento organizados em diretórios separados. Isso reduz o risco de misturar registros de modelos diferentes.</p>
+<p>Uma estrutura possível é:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>experimentos/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── modelo_estabilidade/
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│   ├── treinamento/
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   └── avaliacao/
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>├── modelo_velocidade/
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│   ├── treinamento/
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│   └── avaliacao/
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>└── modelo_obstaculos/
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    ├── treinamento/
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    └── avaliacao/
+</span></code></pre></div>
+<p>Essa estrutura é apenas uma sugestão para organizar os arquivos no computador. Os caminhos efetivamente utilizados devem ser configurados de acordo com as instruções do notebook selecionado.</p>
+<h3 id="opcao-2-deepracer-for-cloud-drfc">Opção 2: DeepRacer for Cloud (DRFC)<a class="headerlink" href="#opcao-2-deepracer-for-cloud-drfc" title="Permanent link">&para;</a></h3>
+<p>Se você estiver utilizando o <a href="https://github.com/aws-deepracer-community/deepracer-for-cloud">DeepRacer for Cloud</a>, os registros podem estar disponíveis no ambiente em que os modelos foram treinados.</p>
+<p>Consulte a documentação da versão instalada para localizar os diretórios correspondentes aos modelos e identificar os arquivos necessários para a análise.</p>
+<p>O repositório do DeepRacer Analysis também documenta uma integração com o DeepRacer for Cloud. Nessa configuração, o comando <code>dr-start-loganalysis</code> inicia o ambiente de análise disponibilizado pelo projeto.</p>
+<p>Esse procedimento depende de uma instalação funcional do DRFC e da configuração correspondente. Ele não deve ser presumido como disponível em qualquer ambiente de treinamento.</p>
+<h2 id="como-configurar-e-executar-a-ferramenta">Como configurar e executar a ferramenta<a class="headerlink" href="#como-configurar-e-executar-a-ferramenta" title="Permanent link">&para;</a></h2>
+<p>A ferramenta pode ser executada em um ambiente local ou em um ambiente de Jupyter hospedado na nuvem. A escolha depende de como os logs serão acessados e dos recursos disponíveis.</p>
+<p>Para começar, a execução local é uma alternativa prática quando os arquivos já foram baixados para o computador. Ela evita a necessidade de manter uma instância de análise separada na nuvem, embora exija a instalação das dependências e recursos computacionais locais adequados.</p>
+<h3 id="opcao-1-execucao-local-com-python-e-jupyterlab">Opção 1: Execução local com Python e JupyterLab<a class="headerlink" href="#opcao-1-execucao-local-com-python-e-jupyterlab" title="Permanent link">&para;</a></h3>
+<h4 id="pre-requisitos">Pré-requisitos<a class="headerlink" href="#pre-requisitos" title="Permanent link">&para;</a></h4>
+<p>Você precisará de:</p>
+<ul>
+<li>Python 3 compatível com as dependências da versão atual da ferramenta.</li>
+<li>Git instalado.</li>
+<li>Acesso ao terminal.</li>
+<li>Os logs do modelo que deseja analisar.</li>
+<li>Um ambiente com permissões para instalar as dependências necessárias.</li>
+</ul>
+<p>O uso de um ambiente virtual Python é recomendado para isolar as bibliotecas da ferramenta das demais instalações do computador.</p>
+<h4 id="passo-a-passo">Passo a passo<a class="headerlink" href="#passo-a-passo" title="Permanent link">&para;</a></h4>
+<p><strong>1. Clone o repositório</strong></p>
+<p>Abra o terminal e execute:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/aws-deepracer-community/deepracer-analysis.git
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd</span><span class="w"> </span>deepracer-analysis
+</span></code></pre></div>
+<p>O comando <code>git clone</code> baixa os arquivos da ferramenta para o computador. O comando <code>cd</code> acessa a pasta criada.</p>
+<p><strong>2. Crie um ambiente virtual</strong></p>
+<p>No Linux ou macOS:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+</span></code></pre></div>
+<p>No Windows, utilizando o PowerShell:</p>
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">py</span> <span class="n">-m</span> <span class="n">venv</span> <span class="p">.</span><span class="n">venv</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="p">.</span><span class="n">venv</span><span class="p">\</span><span class="n">Scripts</span><span class="p">\</span><span class="n">Activate</span><span class="p">.</span><span class="n">ps1</span>
+</span></code></pre></div>
+<p>Se a ativação não funcionar, verifique as instruções do Python para o seu sistema operacional e as políticas de execução do terminal.</p>
+<p><strong>3. Instale as dependências</strong></p>
+<p>Com o ambiente virtual ativado, execute:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</span></code></pre></div>
+<p>O arquivo <code>requirements.txt</code> contém as dependências definidas pelo projeto. Seguir esse arquivo é mais confiável do que instalar manualmente apenas algumas bibliotecas, pois a ferramenta pode depender de outros pacotes além de Pandas e Matplotlib.</p>
+<p>Caso a instalação apresente erros, consulte o README do repositório e verifique a compatibilidade entre a versão do Python e as dependências exigidas.</p>
+<p><strong>4. Inicie o JupyterLab</strong></p>
+<p>Execute:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>jupyter<span class="w"> </span>lab
+</span></code></pre></div>
+<p>O JupyterLab disponibiliza uma interface no navegador para abrir e executar os notebooks.</p>
+<p>Se o comando não for reconhecido, verifique se o ambiente virtual está ativado e se a instalação das dependências foi concluída corretamente.</p>
+<p><strong>5. Abra o notebook de análise</strong></p>
+<p>Na interface do JupyterLab, navegue até a pasta do repositório e abra o notebook apropriado ao seu objetivo.</p>
+<p>Para começar, utilize o <code>Training_analysis.ipynb</code> para investigar os dados de treinamento.</p>
+<p><strong>6. Configure o acesso aos logs</strong></p>
+<p>Siga as instruções do próprio notebook para indicar a origem dos dados.</p>
+<p>Conforme a configuração utilizada, a ferramenta pode precisar de caminhos para arquivos locais ou de acesso aos registros armazenados na AWS.</p>
+<div class="admonition warning">
+<p class="admonition-title">Atenção aos requisitos do ambiente</p>
+<p>Se o notebook buscar dados diretamente na AWS, será necessário ter o AWS CLI instalado e configurado, além de permissões compatíveis com os recursos acessados. A identidade utilizada precisa ter autorização para ler os objetos necessários no Amazon S3.</p>
+</div>
+<p>Se os logs já estiverem no computador, utilize os caminhos locais esperados pelo notebook. Não presuma que qualquer arquivo com a extensão <code>.log</code> será automaticamente reconhecido: o formato e a organização dos dados precisam ser compatíveis com a análise.</p>
+<p><strong>7. Execute as células</strong></p>
+<p>Execute as células do notebook na ordem apresentada, observando as mensagens retornadas durante a execução.</p>
+<p>Quando uma célula apresentar erro, investigue sua causa antes de prosseguir. Problemas podem estar relacionados a caminhos incorretos, dependências incompatíveis, permissões de acesso ou formatos de dados diferentes dos esperados.</p>
+<h3 id="opcao-2-execucao-em-um-ambiente-jupyter-hospedado-na-aws">Opção 2: Execução em um ambiente Jupyter hospedado na AWS<a class="headerlink" href="#opcao-2-execucao-em-um-ambiente-jupyter-hospedado-na-aws" title="Permanent link">&para;</a></h3>
+<p>Executar a análise em um ambiente hospedado na AWS pode ser útil quando os dados já estão armazenados no Amazon S3 ou quando o ambiente local não possui recursos suficientes.</p>
+<p>A configuração exata depende do ambiente Jupyter disponível. O procedimento abaixo pressupõe que você já tenha acesso a um ambiente de execução compatível, como uma instância de análise previamente configurada.</p>
+<p><strong>1. Verifique o acesso aos logs</strong></p>
+<p>Confirme se os registros necessários estão disponíveis no Amazon S3 ou se você precisará carregá-los a partir de arquivos baixados.</p>
+<p>Na solução oficial DeepRacer on AWS, os arquivos gerados durante o treinamento e a avaliação são armazenados em recursos da implantação. O método mais direto para obter os registros é utilizar os recursos de download da interface do modelo.</p>
+<p><strong>2. Configure as permissões</strong></p>
+<p>Se o notebook precisar ler os arquivos diretamente no S3, a identidade utilizada pela sessão deverá ter as permissões necessárias para acessar os objetos correspondentes.</p>
+<p>Em um ambiente hospedado na AWS, isso pode depender da função IAM associada ao ambiente e das políticas aplicadas à conta. A configuração deve seguir o princípio do menor privilégio: conceda somente as permissões necessárias para a análise.</p>
+<p><strong>3. Prepare a ferramenta</strong></p>
+<p>No terminal do ambiente Jupyter, clone o repositório e instale as dependências conforme as instruções da versão utilizada.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/aws-deepracer-community/deepracer-analysis.git
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">cd</span><span class="w"> </span>deepracer-analysis
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</span></code></pre></div>
+<p>Caso o ambiente utilize uma estrutura própria de gerenciamento de dependências, siga os procedimentos adotados por ele.</p>
+<p><strong>4. Abra e configure o notebook</strong></p>
+<p>Abra o <code>Training_analysis.ipynb</code>, configure a origem dos logs conforme as instruções fornecidas pelo projeto e execute as células.</p>
+<p><strong>5. Encerre os recursos que não serão mais utilizados</strong></p>
+<p>O uso de recursos computacionais hospedados pode gerar custos, conforme o serviço, o tipo de recurso e o tempo de execução.</p>
+<p>Ao terminar, encerre ou interrompa os recursos de análise que não precisarão permanecer ativos. Se a infraestrutura tiver sido criada especificamente para esse trabalho, verifique também quais recursos devem ser removidos para evitar custos desnecessários.</p>
+<p><strong>Observação:</strong> a análise dos logs não exige necessariamente a criação de uma nova instância do SageMaker. Utilize o ambiente de execução compatível que estiver disponível e avalie os custos e requisitos antes de provisionar infraestrutura adicional.</p>
+<h2 id="como-interpretar-os-resultados">Como interpretar os resultados<a class="headerlink" href="#como-interpretar-os-resultados" title="Permanent link">&para;</a></h2>
+<p>Após executar os notebooks, o próximo passo é interpretar os dados. Os gráficos não devem ser vistos apenas como representações do treinamento, mas como ferramentas para investigar o comportamento do modelo.</p>
+<p>A interpretação deve considerar o objetivo do experimento, as métricas disponíveis e as condições em que os dados foram coletados.</p>
+<h3 id="1-evolucao-da-recompensa">1. Evolução da recompensa<a class="headerlink" href="#1-evolucao-da-recompensa" title="Permanent link">&para;</a></h3>
+<p>A evolução da recompensa ajuda a observar como o sinal recebido pelo agente varia durante o treinamento.</p>
+<p>Uma tendência crescente pode indicar que o modelo está aprendendo comportamentos favorecidos pela função de recompensa. Entretanto, isso não garante que o agente esteja dirigindo melhor.</p>
+<p>Por exemplo, se a função de recompensa favorecer excessivamente a velocidade, o modelo poderá aumentar sua pontuação mesmo sem melhorar a consistência das voltas.</p>
+<p>Por isso, interprete a curva em conjunto com outras evidências, como o progresso na pista, as saídas do percurso e os resultados da avaliação.</p>
+<h3 id="2-trajetoria-do-veiculo">2. Trajetória do veículo<a class="headerlink" href="#2-trajetoria-do-veiculo" title="Permanent link">&para;</a></h3>
+<p>Os recursos de análise visual podem ajudar a identificar regiões em que o modelo apresenta dificuldades.</p>
+<p>Observe se o veículo:</p>
+<ul>
+<li>Sai repetidamente da pista em determinada curva.</li>
+<li>Apresenta movimentos excessivamente oscilantes.</li>
+<li>Mantém uma trajetória inadequada em determinados trechos.</li>
+<li>Tem dificuldades para contornar obstáculos, quando a modalidade e os dados utilizados permitem essa análise.</li>
+</ul>
+<p>A trajetória fornece evidências sobre o comportamento do agente, mas não explica automaticamente a causa de um problema. A investigação precisa considerar também a função de recompensa, o espaço de ação, os sensores utilizados e as condições de treinamento.</p>
+<h3 id="3-velocidade-e-controle">3. Velocidade e controle<a class="headerlink" href="#3-velocidade-e-controle" title="Permanent link">&para;</a></h3>
+<p>Quando os registros e as ferramentas utilizadas disponibilizarem informações adequadas, examine a relação entre velocidade, direção e comportamento na pista.</p>
+<p>Um veículo que apresenta alta velocidade em retas, mas perde o controle repetidamente nas curvas, pode estar sendo incentivado a priorizar a velocidade sem considerar suficientemente as consequências dessa escolha.</p>
+<p>Antes de alterar a função de recompensa, verifique se os dados sustentam essa hipótese. Em seguida, conduza um experimento controlado para investigar o efeito da mudança.</p>
+<h3 id="4-consistencia-do-desempenho">4. Consistência do desempenho<a class="headerlink" href="#4-consistencia-do-desempenho" title="Permanent link">&para;</a></h3>
+<p>Uma execução bem-sucedida não garante que o modelo seja consistente.</p>
+<p>Compare os resultados de diferentes avaliações e observe se o comportamento se mantém ao longo de várias tentativas. Quando possível, considere o percentual de conclusão da pista, o tempo de volta e a frequência de comportamentos indesejados.</p>
+<p>A comparação precisa ser feita sob condições equivalentes. Diferenças nas pistas, nas modalidades, nas configurações ou nos procedimentos de avaliação podem dificultar a interpretação dos resultados.</p>
+<h3 id="5-estagnacao-ou-oscilacao-do-treinamento">5. Estagnação ou oscilação do treinamento<a class="headerlink" href="#5-estagnacao-ou-oscilacao-do-treinamento" title="Permanent link">&para;</a></h3>
+<p>Um modelo pode deixar de apresentar melhorias claras ou mostrar grandes oscilações nas métricas.</p>
+<p>Esses comportamentos não possuem uma causa única. Podem estar relacionados à função de recompensa, à exploração, aos hiperparâmetros, à variabilidade das experiências ou às limitações do espaço de ação.</p>
+<p>Evite concluir que determinado parâmetro é o responsável apenas com base em uma curva. Procure outras evidências nos logs e, sempre que possível, teste uma hipótese por vez.</p>
+<h2 id="estrategia-pratica-de-diagnostico">Estratégia prática de diagnóstico<a class="headerlink" href="#estrategia-pratica-de-diagnostico" title="Permanent link">&para;</a></h2>
+<p>Quando os resultados não corresponderem ao esperado, utilize a análise como parte de um ciclo de investigação.</p>
+<ol>
+<li><strong>Identifique o problema:</strong> descreva o comportamento observado, como saídas recorrentes da pista ou ausência de melhoria no desempenho.</li>
+<li><strong>Examine os dados:</strong> consulte os gráficos e os registros disponíveis para localizar situações associadas ao problema.</li>
+<li><strong>Formule uma hipótese:</strong> procure explicar como a função de recompensa, o espaço de ação ou outra configuração pode contribuir para o comportamento.</li>
+<li><strong>Escolha uma alteração:</strong> modifique o componente mais diretamente relacionado à hipótese.</li>
+<li><strong>Repita o treinamento ou a avaliação:</strong> utilize condições comparáveis para observar o efeito da alteração.</li>
+<li><strong>Registre a conclusão:</strong> documente o resultado e verifique se as evidências apoiam ou contradizem a hipótese.</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Dica de experimentação</p>
+<p>Essa abordagem diminui a dependência de ajustes aleatórios e torna o processo de otimização mais consistente.</p>
+</div>
+<p>Por exemplo, se o veículo sai repetidamente da pista em curvas, uma possível hipótese é que a função de recompensa esteja incentivando a velocidade sem considerar adequadamente o controle do veículo. A análise dos registros pode ajudar a investigar essa possibilidade.</p>
+<p>Após formular a hipótese, altere a função de recompensa ou outra configuração pertinente, treine uma nova versão do modelo e compare os resultados. Se o comportamento não melhorar, será necessário reconsiderar a hipótese e investigar outras causas.</p>
+<h2 id="cuidados-e-limitacoes">Cuidados e limitações<a class="headerlink" href="#cuidados-e-limitacoes" title="Permanent link">&para;</a></h2>
+<p>Antes de tirar conclusões a partir dos gráficos, considere alguns cuidados.</p>
+<p><strong>A recompensa não é uma medida universal de qualidade.</strong> Ela representa o objetivo numérico estabelecido pela função de recompensa. Um valor maior não garante, isoladamente, um comportamento melhor.</p>
+<p><strong>Os registros dependem do ambiente utilizado.</strong> A estrutura dos arquivos, os parâmetros disponíveis e as métricas registradas podem variar conforme a implementação do DeepRacer e a versão da ferramenta.</p>
+<p><strong>Os gráficos não identificam automaticamente a causa de um problema.</strong> Eles ajudam a localizar comportamentos e formular hipóteses, mas as conclusões precisam ser verificadas por meio de novos experimentos.</p>
+<p><strong>Os logs de treinamento não são os mesmos que os logs operacionais da infraestrutura.</strong> No DeepRacer on AWS, os registros de treinamento e avaliação podem ser baixados pela interface do modelo. Já os logs do Amazon CloudWatch podem auxiliar na investigação de erros de serviços e componentes da implantação. Cada tipo de registro serve a uma finalidade diferente.</p>
+<p><strong>Proteja os dados e as credenciais.</strong> Não inclua chaves de acesso da AWS, arquivos de configuração com credenciais ou outros segredos no repositório público do projeto. Antes de publicar logs ou artefatos, verifique se não contêm informações que não devem ser compartilhadas.</p>
+<h2 id="referencias-oficiais-e-recursos">Referências oficiais e recursos<a class="headerlink" href="#referencias-oficiais-e-recursos" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/aws-deepracer-community/deepracer-analysis">Repositório DeepRacer Analysis — AWS DeepRacer Community</a></li>
+<li><a href="https://docs.aws.amazon.com/solutions/latest/deepracer-on-aws/">DeepRacer on AWS — Solução oficial</a></li>
+<li><a href="https://docs.aws.amazon.com/solutions/latest/deepracer-on-aws/troubleshooting-the-solution.html">Troubleshooting the solution — DeepRacer on AWS</a></li>
+<li><a href="https://github.com/aws-deepracer-community/deepracer-for-cloud">DeepRacer for Cloud — Repositório da comunidade</a></li>
+</ul>
+<h2 id="proxima-etapa">Próxima etapa<a class="headerlink" href="#proxima-etapa" title="Permanent link">&para;</a></h2>
+<p><a href="../desafios/">Desafios Práticos</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Rodapé" >
+        
+          
+          <a href="../otimizacao-e-estrategia/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: 3. Otimização e Estratégia">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              <div class="md-ellipsis">
+                3. Otimização e Estratégia
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../desafios/" class="md-footer__link md-footer__link--next" aria-label="Próximo: 5. Desafios Práticos">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Próximo
+              </span>
+              <div class="md-ellipsis">
+                5. Desafios Práticos
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
