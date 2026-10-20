@@ -1,0 +1,74 @@
+site_name: Da Teoria à Pista
+site_description: Guia prático de Aprendizagem por Reforço utilizando o AWS DeepRacer.
+site_author: Ruan Andrew
+
+site_url: https://labpei-ifpe-paulista.github.io/bia-deepracer/
+
+repo_name: labpei-ifpe-paulista/bia-deepracer
+repo_url: https://github.com/labpei-ifpe-paulista/bia-deepracer
+
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Mudar para modo escuro
+    
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Mudar para modo claro
+
+
+nav:
+  - Início: index.md
+  - O Guia:
+    - 1. Introdução: introducao.md
+    - 2. Fundamentos de RL: fundamentos-rl.md
+    - 3. Otimização e Estratégia: otimizacao-e-estrategia.md
+    - 4. Análise de Logs: analise-de-logs.md
+    - 5. Desafios Práticos: desafios.md
+
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition 
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
